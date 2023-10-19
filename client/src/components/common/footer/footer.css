@@ -2,6 +2,7 @@
   background-color: #27ae60;
   padding: 20px 0;
   color: #fff;
+  z-index: 1;
 }
 .footerContact h2 {
   font-size: 30px;
