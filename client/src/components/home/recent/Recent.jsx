@@ -2,6 +2,7 @@ import React from "react"
 import Heading from "../../common/Heading"
 import "./recent.css"
 import RecentCard from "./RecentCard"
+import { Search } from "../../RoomSearch/Search"
 
 const Recent = () => {
   return (

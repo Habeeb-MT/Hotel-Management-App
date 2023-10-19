@@ -11,6 +11,7 @@ import { Login } from "../LogReg/Login"
 import { Register } from "../LogReg/Register"
 import { Dashboard } from "../dashboard/Dashboard"
 import { UserContext } from "../../contexts/UserContext"
+import { Rooms } from "../Rooms/Rooms"
 
 
 
@@ -31,6 +32,7 @@ const Pages = () => {
           <Route exact path='/rooms' element={<Blog />} />
           <Route exact path='/contact' element={<Contact />} />
           <Route exact path='/:id/dashboard' element={<Dashboard />} />
+          <Route exact path='/admin/rooms' element={<Rooms />} />
         </Routes>
         <Footer />
       </Router>
