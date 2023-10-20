@@ -1,0 +1,19 @@
+.sect{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.sect .subcontainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+.container .form{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+}
