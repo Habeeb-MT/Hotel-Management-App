@@ -1,9 +1,4 @@
 .containerlog {
-    height: 34rem;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    margin-top: 2.5rem;
     border-radius: 1.5rem;
     display: flex;
     align-items: center;

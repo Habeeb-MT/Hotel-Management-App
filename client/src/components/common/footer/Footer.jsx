@@ -34,7 +34,7 @@ const Footer = () => {
                 />
               </GoogleMapReact> */}
             </div>
-            <button className='btn5' ><Link to="/contact">Contact Now</Link></button>
+            {/* <button className='btn5' ><Link to="/contact">Contact Now</Link></button> */}
           </div>
         </div>
       </section>

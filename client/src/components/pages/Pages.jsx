@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import Header from "../common/header/Header"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "../home/Home"
@@ -9,8 +9,18 @@ import Services from "../services/Services"
 import Contact from "../contact/Contact"
 import { Login } from "../LogReg/Login"
 import { Register } from "../LogReg/Register"
+import { Dashboard } from "../dashboard/Dashboard"
+import { UserContext } from "../../contexts/UserContext"
+import { Rooms } from "../Rooms/Rooms"
+import { BookRooms } from "../Rooms/BookRooms"
+import { AllRooms } from "../Rooms/AllRooms"
+import { GuestList } from "../Guests/GuestList"
+
 
 const Pages = () => {
+
+  const { islogged } = useContext(UserContext)
+
   return (
     <>
       <Router>
@@ -23,6 +33,12 @@ const Pages = () => {
           <Route exact path='/register' element={<Register />} />
           <Route exact path='/rooms' element={<Blog />} />
           <Route exact path='/contact' element={<Contact />} />
+          <Route exact path='/:id/dashboard' element={<Dashboard />} />
+          <Route exact path='/admin/rooms' element={<Rooms />} />
+          <Route exact path='/book/rooms' element={<BookRooms />} />
+          <Route exact path='/allrooms' element={<AllRooms />} />
+          <Route exact path='/guests' element={<GuestList />} />
+
         </Routes>
         <Footer />
       </Router>

@@ -1,0 +1,33 @@
+.table {
+    .button {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+
+        span {
+            margin-left: 5px;
+        }
+
+        img {
+            height: 16px;
+            width: 16px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    }
+
+    .List {
+        .button {
+
+            &:hover {
+                color: var(--mainColor);
+                background: var(bg1);
+            }
+        }
+    }
+
+}
