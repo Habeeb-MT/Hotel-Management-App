@@ -3,10 +3,24 @@ import "./header.css"
 import { nav } from "../../data/Data"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/auth";
+
 
 const Header = () => {
   const [navList, setNavList] = useState(false)
   const navigate = useNavigate();
+  const [auth, setAuth] = useAuth();
+
+  const handleLogout = () => {
+    setAuth({
+      ...auth,
+      user: null,
+      token: "",
+    });
+    localStorage.removeItem("auth");
+    navigate("/");
+    // toast.success("Logout succesfully");
+  };
   return (
     <>
       <header>
@@ -25,9 +39,16 @@ const Header = () => {
             </ul>
           </div>
           <div className='button flex'>
-            <button className='btn1' onClick={() => navigate("/login")}>
-              <i className='fa fa-sign-out'></i> Sign In
-            </button>
+            {!auth.token ? (
+              <> <button className='btn1' onClick={() => navigate("/login")}>
+                <i className='fa fa-sign-out'></i> Sign In
+              </button>
+              </>) : (<>
+                <button className='btn1' onClick={handleLogout}>
+                  <i className='fa fa-sign-out'></i> Logout
+                </button>
+              </>
+            )}
           </div>
 
           <div className='toggle'>

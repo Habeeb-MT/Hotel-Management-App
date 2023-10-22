@@ -15,6 +15,7 @@ import { Rooms } from "../Rooms/Rooms"
 import { BookRooms } from "../Rooms/BookRooms"
 import { AllRooms } from "../Rooms/AllRooms"
 import { GuestList } from "../Guests/GuestList"
+import { SelectRoom } from "../Rooms/SelectRoom"
 
 
 const Pages = () => {
@@ -38,6 +39,7 @@ const Pages = () => {
           <Route exact path='/book/rooms' element={<BookRooms />} />
           <Route exact path='/allrooms' element={<AllRooms />} />
           <Route exact path='/guests' element={<GuestList />} />
+          <Route exact path='/select' element={<SelectRoom />} />
 
         </Routes>
         <Footer />

@@ -7,7 +7,10 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Heading from "../common/Heading";
-
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 function getStyles(name, personName, theme) {
     return {
@@ -123,6 +126,18 @@ export const Search = () => {
                         selectedValues={selectedAvai}
                         onChange={handleAvaiChange}
                     />
+                </div>
+                <div className='box'>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker']}>
+                            <DatePicker label="Check-In Date" />
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker']}>
+                            <DatePicker label="Check-Out Date" />
+                        </DemoContainer>
+                    </LocalizationProvider>
                 </div>
 
                 <button className='btn1'>

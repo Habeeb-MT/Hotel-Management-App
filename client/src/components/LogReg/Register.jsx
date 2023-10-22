@@ -12,18 +12,29 @@ export const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleReg = async () => {
-        try {
-            await axios.post('/register', { name, email, password, });
-            // Handle successful registration (e.g., show a success message or redirect)
-        } catch (error) {
-            console.error(error);
-            // Handle registration error
-        }
-    }
-
     const navigate = useNavigate();
+
+    //form function
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("/api/v1/auth/register", {
+                name,
+                email,
+                password
+            });
+            if (res && res.data.success) {
+                // toast.success(res.data && res.data.message);
+                navigate("/login");
+            } else {
+                // toast.error(res.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            //   toast.error("Something went wrong");
+        }
+    };
+
 
     return (
         <>
@@ -44,7 +55,7 @@ export const Register = () => {
                     </div>
                 </div>
                 <div class="form-box  ">
-                    <form >
+                    <form onSubmit={handleSubmit}>
                         <h2>Sign Up</h2>
                         <div class="input-box">
                             {/* <span class="icon"><i class='bx bx-user'></i></span> */}
@@ -64,7 +75,7 @@ export const Register = () => {
                             <label>Password</label>
                         </div>
 
-                        <button type="submit" class="btn" onClick={handleReg}>Sign up</button>
+                        <button type="submit" class="btn" >Sign up</button>
 
                         <div class="login-register">
                             <p>Already have an account? <a class="login-link" onClick={() => navigate("/login")}>Sign in</a></p>
@@ -75,4 +86,3 @@ export const Register = () => {
         </>
     )
 }
-

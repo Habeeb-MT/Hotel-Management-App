@@ -17,3 +17,19 @@
     flex-direction: column;
     gap: 30px;
 }
+
+
+.common-part{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+}
+
+.table ul{
+    margin: 20px 0px;
+}
+.table ul li{
+    font-size: 13px;
+}
