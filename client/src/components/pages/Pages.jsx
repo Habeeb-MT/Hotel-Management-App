@@ -10,16 +10,13 @@ import Contact from "../contact/Contact"
 import { Login } from "../LogReg/Login"
 import { Register } from "../LogReg/Register"
 import { Dashboard } from "../dashboard/Dashboard"
-import { UserContext } from "../../contexts/UserContext"
 import { Rooms } from "../Rooms/Rooms"
 import { BookRooms } from "../Rooms/BookRooms"
 import { AllRooms } from "../Rooms/AllRooms"
 import { GuestList } from "../Guests/GuestList"
-
+import PrivateRoute from "../Routes/Private";
 
 const Pages = () => {
-
-  const { islogged } = useContext(UserContext)
 
   return (
     <>
@@ -33,7 +30,10 @@ const Pages = () => {
           <Route exact path='/register' element={<Register />} />
           <Route exact path='/rooms' element={<Blog />} />
           <Route exact path='/contact' element={<Contact />} />
-          <Route exact path='/:id/dashboard' element={<Dashboard />} />
+          <Route path="/:id/dashboard" element={<PrivateRoute />}>
+            <Route path="" element={<Dashboard />} />  
+        </Route>
+          {/* <Route exact path='/:id/dashboard' element={<Dashboard />} /> */}
           <Route exact path='/admin/rooms' element={<Rooms />} />
           <Route exact path='/book/rooms' element={<BookRooms />} />
           <Route exact path='/allrooms' element={<AllRooms />} />
