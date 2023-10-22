@@ -10,7 +10,6 @@ const Header = () => {
   const [navList, setNavList] = useState(false)
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
-
   const handleLogout = () => {
     setAuth({
       ...auth,
