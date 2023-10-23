@@ -33,3 +33,9 @@
 .table ul li{
     font-size: 13px;
 }
+
+.btn-div{
+    display: flex;
+    gap: 50px;
+    justify-content: space-between;
+}

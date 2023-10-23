@@ -20,6 +20,76 @@ export const nav = [
     path: "/contact",
   },
 ]
+
+export const navUser = [
+  {
+    text: "dashboard",
+    path: "/:id/dashboard",
+  },
+  {
+    text: "about",
+    path: "/about",
+  },
+  {
+    text: "services",
+    path: "/services",
+  },
+  {
+    text: "Rooms",
+    path: "/rooms",
+  },
+  {
+    text: "contact",
+    path: "/contact",
+  },
+]
+
+export const navRecep = [
+  {
+    text: "dashboard",
+    path: "/:id/dashboard",
+  },
+  {
+    text: "about",
+    path: "/about",
+  },
+  {
+    text: "services",
+    path: "/services",
+  },
+  {
+    text: "Rooms",
+    path: "/rooms",
+  },
+  {
+    text: "contact",
+    path: "/contact",
+  },
+]
+
+export const navManager = [
+  {
+    text: "dashboard",
+    path: "/:id/dashboard",
+  },
+  {
+    text: "about",
+    path: "/about",
+  },
+  {
+    text: "services",
+    path: "/services",
+  },
+  {
+    text: "Rooms",
+    path: "/rooms",
+  },
+  {
+    text: "contact",
+    path: "/contact",
+  },
+]
+
 export const featured = [
   {
     cover: "../images/hero/h1.png",

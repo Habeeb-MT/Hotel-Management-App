@@ -1,15 +1,16 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import "./header.css"
 import { nav } from "../../data/Data"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../contexts/auth";
-
+import { useAuth } from "../../../contexts/auth.js"
 
 const Header = () => {
+
   const [navList, setNavList] = useState(false)
   const navigate = useNavigate();
-  const [auth, setAuth] = useAuth();
+  const [auth, setAuth, isAdmin, isManager] = useAuth();
+
   const handleLogout = () => {
     setAuth({
       ...auth,
@@ -20,6 +21,8 @@ const Header = () => {
     navigate("/");
     // toast.success("Logout succesfully");
   };
+
+
   return (
     <>
       <header>

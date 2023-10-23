@@ -88,6 +88,9 @@ h4 {
 .padding1 {
   padding: 40px 0;
 }
+.padding2 {
+  padding: 40px 350px;
+}
 .grid3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

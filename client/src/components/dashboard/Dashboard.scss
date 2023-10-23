@@ -222,3 +222,64 @@
     }
 
 }
+
+
+.header {
+    background-color: #fff;
+    height: 10vh;
+    box-shadow: 0 5px 30px rgb(0 22 84 / 10%);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+header a {
+    margin-left: 30px;
+    transition: 0.5s;
+    font-weight: 500;
+}
+
+header a:hover {
+    color: #27ae60;
+}
+
+header h4 {
+    font-weight: 500;
+    margin-right: 20px;
+}
+
+.centrebox {
+    height: 500px;
+    border: 1px solid #27ae60;
+    padding: 0px 50px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.centrebox h3 {
+    margin: 20px auto;
+}
+
+.centrebox .boxcontent {
+    padding: 20px 10px;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid #27ae60;
+}
+
+@media screen and (max-width: 768px) {
+    header {
+        padding: 0;
+    }
+
+    header li a {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+}
