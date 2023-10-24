@@ -10,11 +10,11 @@ import { Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/auth';
 
 
 export const AllRooms = () => {
-    const { isAdmin } = useContext(UserContext);
-
+    const { isManager } = useAuth();
     const { usersList } = useContext(UserContext);
 
     // const [openView, setOpenView] = useState(false)
@@ -27,11 +27,21 @@ export const AllRooms = () => {
         <div>
             <div className="heading" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Rooms Lists</Typography>
-                {/* {isAdmin ? (
+                {isManager ? (
                     <Typography style={{ textAlign: "center", margin: "20px 40px" }}>
-                        <AddUserForm />
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            size="small"
+                            onClick={() => {
+                                // setOpen(true)
+                            }}
+                            style={{ background: "green", margin: "5px", color: "white", fontSize: "10px" }}
+                        >Add Book</Button>
+                        {/* <AddBookForm open={open} handleClose={handleClose} /> */}
+
                     </Typography>
-                ) : ("")} */}
+                ) : ("")}
             </div>
             {usersList.length != 1 ? (
                 <>
@@ -85,7 +95,7 @@ export const AllRooms = () => {
                                                         }}
                                                         state={user}
                                                     >View</Button>
-                                                    {isAdmin && <>
+                                                    {isManager && <>
                                                         <Button
                                                             className='rmbtn'
                                                             variant="contained"

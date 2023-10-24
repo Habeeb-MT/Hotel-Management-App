@@ -9,7 +9,7 @@ const Header = () => {
 
   const [navList, setNavList] = useState(false)
   const navigate = useNavigate();
-  const [auth, setAuth, isAdmin, isManager] = useAuth();
+  const { auth, setAuth, isAdmin, isManager } = useAuth();
 
   const handleLogout = () => {
     setAuth({

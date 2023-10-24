@@ -16,7 +16,7 @@ import { AllRooms } from "../Rooms/AllRooms"
 import { GuestList } from "../Guests/GuestList"
 import { SelectRoom } from "../Rooms/SelectRoom"
 
-import { PrivateRoute } from "../Routes/Private.js";
+// import { PrivateRoute } from "../Routes/Private.js";
 import { useAuth } from "../../contexts/auth"
 import { MyBookings } from "../dashboard/MyBookings"
 import { GuestDetails } from "../Rooms/GuestDetails"
@@ -28,7 +28,7 @@ const Pages = () => {
   const { auth } = useAuth();
 
   const ProtectedRoute = ({ children }) => {
-    if (!auth.token) {
+    if (!auth.user) {
       return <Navigate to="/" />
     }
 
@@ -47,14 +47,14 @@ const Pages = () => {
           <Route exact path='/register' element={<Register />} />
           <Route exact path='/rooms' element={<Blog />} />
           <Route exact path='/contact' element={<Contact />} />
-          <Route exact path='/:id/dashboard' element={<Dashboard />} />
-          <Route exact path='/admin/rooms' element={<Rooms />} />
-          <Route exact path='/book/rooms' element={<BookRooms />} />
-          <Route exact path='/allrooms' element={<AllRooms />} />
-          <Route exact path='/guests' element={<GuestList />} />
-          <Route exact path='/select' element={<SelectRoom />} />
-          <Route exact path='/dashboard/mybooking' element={<MyBookings />} />
-          <Route exact path='/guestDetails' element={<GuestDetails />} />
+          <Route exact path='/:id/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route exact path='/admin/rooms' element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
+          <Route exact path='/book/rooms' element={<ProtectedRoute><BookRooms /></ProtectedRoute>} />
+          <Route exact path='/allrooms' element={<ProtectedRoute><AllRooms /></ProtectedRoute>} />
+          <Route exact path='/guests' element={<ProtectedRoute><GuestList /></ProtectedRoute>} />
+          <Route exact path='/select' element={<ProtectedRoute><SelectRoom /></ProtectedRoute>} />
+          <Route exact path='/dashboard/mybooking' element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+          <Route exact path='/guestDetails' element={<ProtectedRoute><GuestDetails /></ProtectedRoute>} />
 
         </Routes>
         <Footer />

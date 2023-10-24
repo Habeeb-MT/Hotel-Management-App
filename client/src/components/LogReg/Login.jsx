@@ -12,7 +12,7 @@ export const Login = () => {
     const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [auth, setAuth] = useAuth();
+    const { auth, setAuth } = useAuth();
     //form function
     const handleSubmit = async (e) => {
         e.preventDefault();
