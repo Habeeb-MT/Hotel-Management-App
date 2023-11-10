@@ -28,9 +28,9 @@ const Pages = () => {
   const { auth } = useAuth();
 
   const ProtectedRoute = ({ children }) => {
-    if (!auth.user) {
-      return <Navigate to="/" />
-    }
+    // if (!auth.user) {
+    //   return <Navigate to="/" />
+    // }
 
     return children;
   }
