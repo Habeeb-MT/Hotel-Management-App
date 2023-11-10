@@ -25,12 +25,14 @@ import { GuestDetails } from "../Rooms/GuestDetails"
 
 const Pages = () => {
 
-  const { auth } = useAuth();
+  const { auth, isAdmin } = useAuth();
 
   const ProtectedRoute = ({ children }) => {
     // if (!auth.user) {
     //   return <Navigate to="/" />
     // }
+    // if (!isAdmin)
+    //   return <Navigate to="/" />
 
     return children;
   }
@@ -55,7 +57,6 @@ const Pages = () => {
           <Route exact path='/select' element={<ProtectedRoute><SelectRoom /></ProtectedRoute>} />
           <Route exact path='/dashboard/mybooking' element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
           <Route exact path='/guestDetails' element={<ProtectedRoute><GuestDetails /></ProtectedRoute>} />
-
         </Routes>
         <Footer />
       </Router>

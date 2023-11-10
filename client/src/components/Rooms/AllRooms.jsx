@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/auth';
+import { AddRoomForm } from './AddRoomForm';
 
 
 export const AllRooms = () => {
@@ -21,6 +22,12 @@ export const AllRooms = () => {
     // const handleCloseView = () => {
     //     setOpenView(false);
     // };
+
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
 
     return (
@@ -34,11 +41,11 @@ export const AllRooms = () => {
                             component={Link}
                             size="small"
                             onClick={() => {
-                                // setOpen(true)
+                                setOpen(true)
                             }}
                             style={{ background: "green", margin: "5px", color: "white", fontSize: "10px" }}
-                        >Add Book</Button>
-                        {/* <AddBookForm open={open} handleClose={handleClose} /> */}
+                        >Add Room</Button>
+                        <AddRoomForm open={open} handleClose={handleClose} />
 
                     </Typography>
                 ) : ("")}

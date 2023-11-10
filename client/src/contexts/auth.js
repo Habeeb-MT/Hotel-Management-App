@@ -9,6 +9,7 @@ const AuthProvider = ({ children }) => {
     user: null,
     token: "",
   });
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,17 +34,22 @@ const AuthProvider = ({ children }) => {
   }, []);
 
 
-
   useEffect(() => {
-    setIsManager(auth.user && auth.user.role === "manager");
+    if (auth.user) {
+      setIsManager(auth.user.role === 'manager');
+    }
   }, [auth.user]);
 
   useEffect(() => {
-    setIsAdmin(auth.user && auth.user.role === "admin");
+    if (auth.user) {
+      setIsAdmin(auth.user.role === "manager" || auth.user.role === "admin");
+    }
   }, [auth.user]);
 
   useEffect(() => {
-    setIsGuest(auth.user && auth.user.role !== "admin" && auth.user.role !== "manager");
+    if (auth.user) {
+      setIsGuest(auth.user.role === "guest");
+    }
   }, [auth.user]);
 
 

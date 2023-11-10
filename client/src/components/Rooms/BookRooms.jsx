@@ -11,7 +11,7 @@ export default function ColorButtons() {
     return (
         <Stack direction="row" spacing={2}>
             <Button variant="contained" color="success">
-                Book Now
+                Pay Now
             </Button>
         </Stack>
     );
