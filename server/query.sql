@@ -15,3 +15,16 @@ CREATE TABLE logs (
   login_time TIMESTAMPTZ DEFAULT NOW(),
   logout_time TIMESTAMPTZ
 );
+
+CREATE TABLE rooms (
+  rnumber SERIAL PRIMARY KEY,
+  availability INT,
+  rtype VARCHAR(20),
+  rate INT,
+  occupancy INT,
+  guestID VARCHAR(10),
+  hotelID VARCHAR(10),
+  startDate DATE,
+  endDate DATE,
+  status VARCHAR(10)
+);

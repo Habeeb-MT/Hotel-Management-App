@@ -37,7 +37,8 @@ const filterOptions = {
     occupancy: ['1 person', '2 persons', '3 persons', '4 persons'],
     suiteType: ['Single Suite', 'Double Suite', 'Luxury Suite', 'Presidential Suite'],
     ac: ['AC', 'Non-AC'],
-    avai: ['Available', 'Unavailable']
+    avai: ['Available', 'Unavailable'],
+    rate: ['2000-4000', '4000-6000', '6000-10000', '10k and Above']
     // Add more filter options as needed
 };
 
@@ -75,12 +76,42 @@ export const MultipleSelect = ({ options, selectedValues, onChange }) => {
     );
 };
 
+export const SingleSelect = ({ options, selectedValue, onChange }) => {
+    const theme = useTheme();
+    return (
+        <div>
+            <FormControl sx={{ m: 1, width: 300 }}>
+                <InputLabel id="demo-single-name-label">{options.label}</InputLabel>
+                <Select
+                    labelId="demo-single-name-label"
+                    id="demo-single-name"
+                    onChange={onChange}
+                    input={<OutlinedInput label={options.label} />}
+                    MenuProps={MenuProps}
+                >
+                    {options.values.map((value) => (
+                        <MenuItem
+                            key={value}
+                            value={value}
+                            style={getStyles(value, selectedValue, theme)}
+                        >
+                            {value}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        </div>
+    );
+};
+
+
 
 export const Search = () => {
     const [selectedOccupancy, setSelectedOccupancy] = React.useState([]);
     const [selectedSuiteType, setSelectedSuiteType] = React.useState([]);
-    const [selectedAC, setSelectedAC] = React.useState([]);
-    const [selectedAvai, setSelectedAvai] = React.useState([]);
+    const [ac, setAc] = React.useState("");
+    const [selectedAvai, setSelectedAvai] = React.useState("");
+    const [selectedRate, setSelectedRate] = React.useState([]);
 
     const handleOccupancyChange = (event) => {
         setSelectedOccupancy(event.target.value);
@@ -90,12 +121,14 @@ export const Search = () => {
         setSelectedSuiteType(event.target.value);
     };
 
-    const handleACChange = (event) => {
-        setSelectedAC(event.target.value);
-    };
-
     const handleAvaiChange = (event) => {
         setSelectedAvai(event.target.value);
+    };
+    const handleRateChange = (event) => {
+        setSelectedRate(event.target.value);
+    };
+    const handleAcChange = (event) => {
+        setAc(event.target.value);
     };
 
     return (
@@ -105,36 +138,37 @@ export const Search = () => {
             <form className='flex'>
                 <div className='box'>
                     <MultipleSelect
-                        options={{ label: 'Occupancy', values: filterOptions.occupancy }}
-                        selectedValues={selectedOccupancy}
-                        onChange={handleOccupancyChange}
-                    />
-                    <MultipleSelect
                         options={{ label: 'Suite Type', values: filterOptions.suiteType }}
                         selectedValues={selectedSuiteType}
                         onChange={handleSuiteTypeChange}
                     />
+                    <MultipleSelect
+                        options={{ label: 'Occupancy', values: filterOptions.occupancy }}
+                        selectedValues={selectedOccupancy}
+                        onChange={handleOccupancyChange}
+                    />
                 </div>
                 <div className='box'>
                     <MultipleSelect
-                        options={{ label: 'AC', values: filterOptions.ac }}
-                        selectedValues={selectedAC}
-                        onChange={handleACChange}
+                        options={{ label: 'Rate /Night', values: filterOptions.rate }}
+                        selectedValues={selectedRate}
+                        onChange={handleRateChange}
                     />
-                    <MultipleSelect
-                        options={{ label: 'Availability', values: filterOptions.avai }}
-                        selectedValues={selectedAvai}
-                        onChange={handleAvaiChange}
+                    <SingleSelect
+                        options={{ label: 'AC/non-AC', values: filterOptions.ac }}
+                        selectedValue={ac}
+                        onChange={handleAcChange}
                     />
+
                 </div>
                 <div className='box'>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
+                        <DemoContainer components={['DatePicker']} >
                             <DatePicker label="Check-In Date" />
                         </DemoContainer>
                     </LocalizationProvider>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
+                        <DemoContainer components={['DatePicker']} >
                             <DatePicker label="Check-Out Date" />
                         </DemoContainer>
                     </LocalizationProvider>
