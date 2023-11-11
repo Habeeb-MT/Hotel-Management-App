@@ -1,5 +1,4 @@
-import fs from "fs";
-import slugify from "slugify";
+
 import dotenv from "dotenv"
 import client from '../config/db.js';
 dotenv.config();
@@ -10,26 +9,67 @@ dotenv.config();
 //filters
 
 export const productFiltersController = async (req, res) => {
-    try {
-      const { checked, radio } = req.body;
-      let args = {};
-      if (checked.length > 0) args.category = checked;
-      if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
-      const products = await productModel.find(args);
-      
-      res.status(200).send({
-        success: true,
-        products,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(400).send({
-        success: false,
-        message: "Error WHile searching rooms",
-        error,
-      });
+  try {
+    const { selectedOccupancy, selectedSuiteType, ac, selectedAvai, selectedRate } = req.body;
+
+    let values = [];
+    let conditions = [];
+    let index = 1;
+
+    if (selectedOccupancy.length > 0) {
+      conditions.push(`selected_occupancy = $${index}`);
+      values.push(selectedOccupancy);
+      index++;
     }
-  };
+
+    if (selectedSuiteType.length > 0) {
+      conditions.push(`selected_suite_type = $${index}`);
+      values.push(selectedSuiteType);
+      index++;
+    }
+
+    if (ac.length > 0) {
+      conditions.push(`ac = $${index}`);
+      values.push(ac);
+      index++;
+    }
+
+    if (selectedAvai.length > 0) {
+      conditions.push(`selected_avai = $${index}`);
+      values.push(selectedAvai);
+      index++;
+    }
+
+    if (selectedRate.length) {
+      conditions.push(`rate_column BETWEEN $${index} AND $${index + 1}`);
+      values.push(selectedRate[0], selectedRate[1]);
+      index += 2;
+    }
+
+    const query = {
+      text: `
+        SELECT *
+        FROM room
+        WHERE ${conditions.join(' AND ')}
+      `,
+      values,
+    };
+    const result = await client.query(query);
+    const products = result.rows;
+
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({
+      success: false,
+      message: "Error while searching rooms",
+      error,
+    });
+  }
+};
 
 
 

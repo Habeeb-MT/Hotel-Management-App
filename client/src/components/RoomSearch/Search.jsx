@@ -38,7 +38,7 @@ const filterOptions = {
     suiteType: ['Single Suite', 'Double Suite', 'Luxury Suite', 'Presidential Suite'],
     ac: ['AC', 'Non-AC'],
     avai: ['Available', 'Unavailable'],
-    rate: ['2000-4000', '4000-6000', '6000-10000', '10k and Above']
+    rate: [{ name: '2000-4000', array: [2000, 4000] }, { name: '4000-6000', array: [4000, 6000] },{ name: '6000-10000', array: [6000, 10000] },{ name: '10k or more', array: [10000, 50000] }]
     // Add more filter options as needed
 };
 
@@ -75,7 +75,35 @@ export const MultipleSelect = ({ options, selectedValues, onChange }) => {
         </div>
     );
 };
-
+const RateSelect = ({ options, selectedValues, onChange }) => {
+    const theme = useTheme();
+  
+    return (
+      <div>
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id="demo-multiple-name-label">{options.label}</InputLabel>
+          <Select
+            labelId="demo-multiple-name-label"
+            id="demo-multiple-name"
+            value={selectedValues}
+            onChange={onChange}
+            input={<OutlinedInput label={options.label} />}
+            MenuProps={MenuProps}
+          >
+            {options.values.map((value) => (
+              <MenuItem
+                key={value.array}
+                value={value.array}
+                style={getStyles(value.array, selectedValues, theme)}
+              >
+                {value.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+    );
+  };
 export const SingleSelect = ({ options, selectedValue, onChange }) => {
     const theme = useTheme();
     return (
@@ -112,6 +140,8 @@ export const Search = () => {
     const [ac, setAc] = React.useState("");
     const [selectedAvai, setSelectedAvai] = React.useState("");
     const [selectedRate, setSelectedRate] = React.useState([]);
+    
+      // filter by cat
 
     const handleOccupancyChange = (event) => {
         setSelectedOccupancy(event.target.value);
@@ -149,11 +179,17 @@ export const Search = () => {
                     />
                 </div>
                 <div className='box'>
-                    <MultipleSelect
-                        options={{ label: 'Rate /Night', values: filterOptions.rate }}
-                        selectedValues={selectedRate}
-                        onChange={handleRateChange}
+              
+                <RateSelect
+                    label="Rate /Night"
+                    options={{
+                        label: 'Rate /Night',
+                        values: filterOptions.rate
+                    }}
+                    selectedValues={selectedRate}
+                    onChange={handleRateChange}
                     />
+
                     <SingleSelect
                         options={{ label: 'AC/non-AC', values: filterOptions.ac }}
                         selectedValue={ac}
@@ -178,6 +214,7 @@ export const Search = () => {
                     <h3>Search</h3>
                 </button>
             </form>
+            {JSON.stringify(selectedRate,null,4)}
         </div>
     );
 };
