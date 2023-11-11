@@ -1,10 +1,9 @@
 import express from "express";
-import colors from "colors";
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from "morgan";
 import authRoutes from './routes/authRoute.js';
-import roomRoutes from './routes/roomRoute.js';
+import productRoutes from './routes/productRoutes.js';
 //config env
 dotenv.config();
 
@@ -18,6 +17,7 @@ app.use(morgan('dev'));
 
 //routes
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/room", productRoutes);
 
 //rest api
 app.get('/', (req, res) => {
@@ -31,5 +31,5 @@ const PORT = process.env.PORT || 8080;
 
 //run listen
 app.listen(PORT, () => {
-    console.log(`server running on ${PORT}`.bgCyan.white);
+    console.log(`server running on ${PORT}`);
 })

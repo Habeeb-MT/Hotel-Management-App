@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,14 +9,13 @@ import Paper from '@mui/material/Paper';
 import { Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/auth';
 import { AddRoomForm } from './AddRoomForm';
+import axios from 'axios';
 
 
 export const AllRooms = () => {
     const { isManager } = useAuth();
-    const { usersList } = useContext(UserContext);
 
     // const [openView, setOpenView] = useState(false)
     // const handleCloseView = () => {
@@ -24,11 +23,28 @@ export const AllRooms = () => {
     // };
 
     const [open, setOpen] = useState(false);
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("/api/v1/room/fetchrooms");
+                if (response) {
+                    const jsonData = response.data.rooms;
+                    setRooms(jsonData);
+                }
+            } catch (err) {
+                console.error(err.message);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
     const handleClose = () => {
         setOpen(false);
     };
-
 
     return (
         <div>
@@ -50,7 +66,7 @@ export const AllRooms = () => {
                     </Typography>
                 ) : ("")}
             </div>
-            {usersList.length != 1 ? (
+            {rooms.length != 1 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -62,7 +78,6 @@ export const AllRooms = () => {
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Room</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Occupancy</TableCell>
-                                        <TableCell className='tablet' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Suite Type</TableCell>
                                         {window.innerWidth >= 1050 && <>
                                             <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Rate</TableCell>
                                         </>}
@@ -72,25 +87,24 @@ export const AllRooms = () => {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        usersList.map((user, index) => (
+                                        rooms.map((room, index) => (
                                             <TableRow
-                                                key={user?.lid}
+                                                key={room?.lid}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
                                                 <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
                                                 <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>
-                                                    {<div className='user'>
-                                                        <img src={user?.photoURL} alt="" />
-                                                        <span>{user?.displayName}</span></div>
+                                                    {<div className='room'>
+                                                        <img src={room?.photoURL} alt="" />
+                                                        <span>{room?.rtype}</span></div>
                                                     }
                                                 </TableCell>
-                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.lid}</TableCell>
-                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.email}</TableCell>
-                                                <TableCell className='tablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.phone}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.rnumber}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.occupancy}</TableCell>
                                                 {window.innerWidth >= 1050 && <>
-                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.college}</TableCell>
+                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.rate}</TableCell>
                                                 </>}
-                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.issued}</TableCell>
+                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.issued}</TableCell>
                                                 <TableCell align="center">
                                                     <Button
                                                         variant="contained"
@@ -100,7 +114,7 @@ export const AllRooms = () => {
                                                         onClick={() => {
                                                             // setOpenView(true)
                                                         }}
-                                                        state={user}
+                                                        state={room}
                                                     >View</Button>
                                                     {isManager && <>
                                                         <Button
@@ -118,7 +132,7 @@ export const AllRooms = () => {
                                                             style={{ background: "red", margin: "1px", fontSize: "10px" }}
                                                         >Delete</Button>
                                                     </>}
-                                                    {/* <ViewUser openView={openView} handleCloseView={handleCloseView} /> */}
+                                                    {/* <Viewroom openView={openView} handleCloseView={handleCloseView} /> */}
                                                 </TableCell>
                                             </TableRow>
                                         ))
