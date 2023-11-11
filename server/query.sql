@@ -17,14 +17,15 @@ CREATE TABLE logs (
 );
 
 CREATE TABLE rooms (
-  rnumber SERIAL PRIMARY KEY,
+  rnumber VARCHAR(20) PRIMARY KEY,
   availability INT,
   rtype VARCHAR(20),
-  rate INT,
-  occupancy INT,
+  rate VARCHAR(5),
+  occupancy VARCHAR(5),
   guestID VARCHAR(10),
   hotelID VARCHAR(10),
   startDate DATE,
   endDate DATE,
-  status VARCHAR(10)
+  status VARCHAR(10),
+  pic BYTEA
 );
