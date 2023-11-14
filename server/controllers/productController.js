@@ -59,7 +59,7 @@ export const searchProductController = async (req, res) => {
 // create product
 export const createProductController = async (req, res) => {
   try {
-    const { type, cap, num, ac, price, desc, pic } = req.body;
+    const { type, cap, num, price, descript, pic } = req.body;
     // console.log(type, cap, num, price);
 
     // Convert the image data to a Buffer
@@ -70,7 +70,7 @@ export const createProductController = async (req, res) => {
 
 
     const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic) VALUES ($1, $2, $3, $4, $5, $6) RETURNING rnumber';
-    const values = [num, type, price, cap, desc, pic];
+    const values = [num, type, price, cap, descript, pic];
 
     const insert = await client.query(ins, values);
 
@@ -148,6 +148,48 @@ export const deleteProductController = async (req, res) => {
       success: false,
       message: 'Error occurred in room deletion',
       error,
+    });
+  }
+};
+
+
+
+
+// edit product
+export const editProductController = async (req, res) => {
+  try {
+    const { rnumber } = req.params;
+    const updateFields = req.body;
+
+    // Generate the SET clause dynamically based on the fields in updateFields
+    const setClause = Object.keys(updateFields).map((key, index) => {
+      return `${key} = $${index + 1}`;
+    }).join(', ');
+
+    const query = `UPDATE rooms SET ${setClause} WHERE rnumber = $${Object.keys(updateFields).length + 1} RETURNING *`;
+
+    const values = [...Object.values(updateFields), rnumber];
+
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) {
+      return res.status(200).send({
+        success: true,
+        message: 'Room updated successfully',
+        updatedRoom: result.rows[0],
+      });
+    } else {
+      return res.status(404).send({
+        success: false,
+        message: 'Room not found or not updated',
+      });
+    }
+  } catch (error) {
+    console.log('Error in editProductController:', error);
+    res.status(500).send({
+      success: false,
+      message: 'Error occurred in room update',
+      error: error.message,
     });
   }
 };

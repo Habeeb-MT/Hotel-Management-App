@@ -4,7 +4,8 @@ import {
   searchProductController,
   createProductController,
   fetchProductController,
-  deleteProductController
+  deleteProductController,
+  editProductController
 } from "../controllers/productController.js";
 const router = express.Router();
 
@@ -22,5 +23,8 @@ router.get("/fetchrooms", fetchProductController);
 
 // delete room
 router.delete("/deleteroom/:rnumber", deleteProductController);
+
+// update room
+router.put("/editroom/:rnumber", editProductController);
 
 export default router;
