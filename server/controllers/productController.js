@@ -59,18 +59,18 @@ export const searchProductController = async (req, res) => {
 // create product
 export const createProductController = async (req, res) => {
   try {
-    const { name, type, cap, num, ac, price, desc, pic } = req.body;
-    console.log(type, cap, num, price);
+    const { type, cap, num, ac, price, desc, pic } = req.body;
+    // console.log(type, cap, num, price);
 
     // Convert the image data to a Buffer
-    const picBuffer = Buffer.from(pic, 'base64');
+    // const picBuffer = Buffer.from(pic, 'base64');
 
-    console.log('Received pic:', pic);
-    console.log('Decoded picBuffer:', picBuffer);
+    // console.log('Received pic:', pic);
+    // console.log('Decoded picBuffer:', picBuffer);
 
 
-    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, pic) VALUES ($1, $2, $3, $4, $5) RETURNING rnumber';
-    const values = [num, type, price, cap, picBuffer];
+    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic) VALUES ($1, $2, $3, $4, $5, $6) RETURNING rnumber';
+    const values = [num, type, price, cap, desc, pic];
 
     const insert = await client.query(ins, values);
 
@@ -96,6 +96,16 @@ export const fetchProductController = async (req, res) => {
   try {
     const get = await client.query('SELECT * FROM rooms');
     const rooms = get.rows;
+    // const rooms = get.rows.map(room => {
+    //   // Assuming that the image is stored in a column named 'pic' of type bytea
+    //   // Convert the bytea data to a base64-encoded string
+    //   const base64Image = room.pic.toString('base64');
+
+    //   return {
+    //     ...room,
+    //     pic: base64Image,
+    //   };
+    // });
 
     // Send the rooms as JSON response
     res.json({
@@ -112,6 +122,32 @@ export const fetchProductController = async (req, res) => {
       success: false,
       message: 'Error occurred in room fetching',
       error: error.message,
+    });
+  }
+};
+
+
+
+// delete product
+export const deleteProductController = async (req, res) => {
+  try {
+    const { rnumber } = req.params;
+
+    const del = 'DELETE FROM rooms WHERE rnumber = $1';
+
+    const delroom = await client.query(del, [rnumber]);
+
+    return res.status(201).send({
+      success: true,
+      message: 'Room deleted successfully',
+      delroom,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error occurred in room deletion',
+      error,
     });
   }
 };

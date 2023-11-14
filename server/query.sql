@@ -27,5 +27,6 @@ CREATE TABLE rooms (
   startDate DATE,
   endDate DATE,
   status VARCHAR(10),
-  pic BYTEA
+  description VARCHAR(100),
+  pic VARCHAR(30)
 );

@@ -25,6 +25,11 @@ export const AllRooms = () => {
     const [open, setOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
 
+    const handleRoomAdded = (newRoom) => {
+        // Update the local state with the new room data
+        setRooms((prevRooms) => [...prevRooms, newRoom]);
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -41,9 +46,60 @@ export const AllRooms = () => {
         fetchData();
     }, []);
 
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await axios.get("/api/v1/room/fetchrooms");
+    //             if (response) {
+    //                 const jsonData = response.data.rooms.map(room => {
+    //                     // Assuming that the image is stored in a field named 'pic'
+    //                     // Decode the base64 image to a binary string
+    //                     const binaryImage = atob(room.pic);
+
+    //                     // Create a Uint8Array from the binary string
+    //                     const imageArray = new Uint8Array(binaryImage.length);
+    //                     for (let i = 0; i < binaryImage.length; i++) {
+    //                         imageArray[i] = binaryImage.charCodeAt(i);
+    //                     }
+
+    //                     // Create a Blob from the Uint8Array
+    //                     const blob = new Blob([imageArray], { type: 'image/*' });
+
+    //                     // Create a data URL from the Blob
+    //                     const imageUrl = URL.createObjectURL(blob);
+
+    //                     return {
+    //                         ...room,
+    //                         pic: imageUrl,
+    //                     };
+    //                 });
+
+    //                 setRooms(jsonData);
+    //             }
+    //         } catch (err) {
+    //             console.error(err.message);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, []);
+
+
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleDelete = async (rnum) => {
+        try {
+            const response = await axios.delete(`/api/v1/room/deleteroom/${rnum}`);
+            if (response.data.success) {
+                // Remove the deleted room from the local state
+                setRooms((prevRooms) => prevRooms.filter((room) => room.rnumber !== rnum));
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
     };
 
     return (
@@ -61,12 +117,12 @@ export const AllRooms = () => {
                             }}
                             style={{ background: "green", margin: "5px", color: "white", fontSize: "10px" }}
                         >Add Room</Button>
-                        <AddRoomForm open={open} handleClose={handleClose} />
+                        <AddRoomForm open={open} handleClose={handleClose} onRoomAdded={handleRoomAdded} />
 
                     </Typography>
                 ) : ("")}
             </div>
-            {rooms.length != 1 ? (
+            {rooms.length != 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -74,7 +130,7 @@ export const AllRooms = () => {
                             <Table aria-label="simple table">
                                 <TableHead className='tablehead'>
                                     <TableRow>
-                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">SI</TableCell>
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Room</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Occupancy</TableCell>
@@ -89,13 +145,13 @@ export const AllRooms = () => {
                                     {
                                         rooms.map((room, index) => (
                                             <TableRow
-                                                key={room?.lid}
+                                                key={room?.rnumber}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
-                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
+                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='left'>{index + 1}</TableCell>
                                                 <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>
                                                     {<div className='room'>
-                                                        <img src={room?.photoURL} alt="" />
+                                                        {/* <img src={room?.pic} alt="" /> */}
                                                         <span>{room?.rtype}</span></div>
                                                     }
                                                 </TableCell>
@@ -104,7 +160,7 @@ export const AllRooms = () => {
                                                 {window.innerWidth >= 1050 && <>
                                                     <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.rate}</TableCell>
                                                 </>}
-                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.issued}</TableCell>
+                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center"></TableCell>
                                                 <TableCell align="center">
                                                     <Button
                                                         variant="contained"
@@ -130,6 +186,7 @@ export const AllRooms = () => {
                                                             component={Link}
                                                             size="small"
                                                             style={{ background: "red", margin: "1px", fontSize: "10px" }}
+                                                            onClick={() => handleDelete(room.rnumber)}
                                                         >Delete</Button>
                                                     </>}
                                                     {/* <Viewroom openView={openView} handleCloseView={handleCloseView} /> */}

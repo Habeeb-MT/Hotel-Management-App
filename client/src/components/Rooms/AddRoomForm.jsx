@@ -18,7 +18,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 
-export const AddRoomForm = ({ open, handleClose }) => {
+export const AddRoomForm = ({ open, handleClose, onRoomAdded }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
     const [err, setErr] = useState(false);
@@ -29,46 +29,50 @@ export const AddRoomForm = ({ open, handleClose }) => {
     const [ac, setAc] = useState("");
     const [price, setPrice] = useState("");
     const [descript, setDescrit] = useState("");
-    const [pic, setPic] = useState(null);
+    // const [pic, setPic] = useState(null);
+    const [pic, setPic] = useState("");
 
 
-    const convertFileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+    // const convertFileToBase64 = (file) => {
+    //     return new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
 
-            reader.onload = () => {
-                resolve(reader.result.split(",")[1]); // Extract base64 part
-            };
+    //         reader.onload = () => {
+    //             resolve(reader.result.split(",")[1]); // Extract base64 part
+    //         };
 
-            reader.onerror = (error) => {
-                reject(error);
-            };
+    //         reader.onerror = (error) => {
+    //             reject(error);
+    //         };
 
-            reader.readAsDataURL(file);
-        });
-    };
+    //         reader.readAsDataURL(file);
+    //     });
+    // };
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (type === "" || cap === "" || num === "" || descript === 0 || pic == null || price === 0) {
+        if (type === "" || cap === "" || num === "" || descript === 0 || price === 0) {
             return;
         }
 
         try {
 
-            const picBase64 = pic ? await convertFileToBase64(pic) : null;
+            // const picBase64 = pic ? await convertFileToBase64(pic) : null;
 
             const response = await axios.post("/api/v1/room/addroom", {
                 num,
                 type,
                 cap,
                 price,
-                pic: picBase64, // Send the base64-encoded pic
+                // pic: picBase64, // Send the base64-encoded pic
+                pic,
             });
             if (response && response.data.success) {
                 console.log("Room added successfully:", response.data);
+                // onRoomAdded(response.data.room);
                 handleClose();
+
             }
             else {
                 console.log("error")
