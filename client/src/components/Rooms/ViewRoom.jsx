@@ -1,8 +1,12 @@
 import React from "react";
 import { Dialog, DialogContent, DialogTitle, Button, Typography } from "@mui/material";
 import "./Room.scss"; // Add your custom styles here
+import { useAuth } from "../../contexts/auth";
 
 const ViewRoom = ({ openView, handleCloseView, room, handleEdit }) => {
+
+    const { isManager } = useAuth();
+
     return (
         <Dialog open={openView} onClose={handleCloseView} maxWidth="sm" fullWidth>
             <DialogTitle>
@@ -41,7 +45,7 @@ const ViewRoom = ({ openView, handleCloseView, room, handleEdit }) => {
                     </div>
                 </div>
                 <div className="view-room-actions">
-                    <Button
+                    {isManager && <Button
                         size="small"
                         variant="contained"
                         onClick={() => {
@@ -52,7 +56,7 @@ const ViewRoom = ({ openView, handleCloseView, room, handleEdit }) => {
 
                     >
                         Edit
-                    </Button>
+                    </Button>}
                     <Button
                         size="small"
                         variant="contained"

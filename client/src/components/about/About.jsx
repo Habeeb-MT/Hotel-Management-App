@@ -17,9 +17,6 @@ const About = () => {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
             <button className='btn2'>More About Us</button>
           </div>
-          <div className='right row'>
-            <img src='./immio.jpg' alt='' />
-          </div>
         </div>
       </section>
     </>

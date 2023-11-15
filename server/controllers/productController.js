@@ -60,17 +60,9 @@ export const searchProductController = async (req, res) => {
 export const createProductController = async (req, res) => {
   try {
     const { type, cap, num, price, descript, pic } = req.body;
-    // console.log(type, cap, num, price);
 
-    // Convert the image data to a Buffer
-    // const picBuffer = Buffer.from(pic, 'base64');
-
-    // console.log('Received pic:', pic);
-    // console.log('Decoded picBuffer:', picBuffer);
-
-
-    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic) VALUES ($1, $2, $3, $4, $5, $6) RETURNING rnumber';
-    const values = [num, type, price, cap, descript, pic];
+    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING rnumber';
+    const values = [num, type, price, cap, descript, pic, "Available"];
 
     const insert = await client.query(ins, values);
 

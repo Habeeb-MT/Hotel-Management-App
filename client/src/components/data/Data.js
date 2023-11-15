@@ -24,11 +24,11 @@ export const nav = [
 export const navUser = [
   {
     text: "dashboard",
-    path: "/:id/dashboard",
+    path: "/about",
   },
   {
-    text: "about",
-    path: "/about",
+    text: "Bookings",
+    path: "/mybooking",
   },
   {
     text: "services",
@@ -50,20 +50,16 @@ export const navRecep = [
     path: "/:id/dashboard",
   },
   {
-    text: "about",
+    text: "Requests",
     path: "/about",
   },
   {
-    text: "services",
-    path: "/services",
+    text: "Guests",
+    path: "/guests",
   },
   {
     text: "Rooms",
-    path: "/rooms",
-  },
-  {
-    text: "contact",
-    path: "/contact",
+    path: "/allrooms",
   },
 ]
 
@@ -73,19 +69,19 @@ export const navManager = [
     path: "/:id/dashboard",
   },
   {
-    text: "about",
+    text: "Requests",
     path: "/about",
   },
   {
-    text: "services",
-    path: "/services",
+    text: "Guests",
+    path: "/guests",
   },
   {
     text: "Rooms",
-    path: "/rooms",
+    path: "/allrooms",
   },
   {
-    text: "contact",
+    text: "Reports",
     path: "/contact",
   },
 ]

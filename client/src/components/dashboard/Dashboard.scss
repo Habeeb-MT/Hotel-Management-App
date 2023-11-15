@@ -283,3 +283,46 @@ header h4 {
         color: #fff;
     }
 }
+
+
+
+.paddingmyBk {
+    padding: 50px 200px;
+
+    .containermyBk {
+        max-width: 1200px;
+        margin: 0 auto;
+
+        .headermyBk {
+            color: #fff;
+            padding: 1rem;
+
+            .nav ul {
+                list-style: none;
+                display: flex;
+                margin: 0;
+                padding: 0;
+            }
+
+            .nav li {
+                margin-right: 1rem;
+                cursor: pointer;
+            }
+        }
+
+        .centrebox {
+            margin-top: 1rem;
+            max-height: 500px; // Set your desired max height
+            overflow-y: auto; // Enable vertical scrolling
+
+            .boxcontent {
+                border: 1px solid #ccc;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    }
+}
