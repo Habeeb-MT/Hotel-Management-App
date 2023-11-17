@@ -9,6 +9,38 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Invoice } from "../Report/Invoice";
+
+import { PDFViewer, Document, Page, Text, StyleSheet, pdf } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+
+// Invoice Dialog Component
+const InvoiceDialog = ({ open, onClose, onDownload, invoiceData }) => {
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            aria-labelledby="invoice-dialog-title"
+            maxWidth="lg"
+            fullWidth
+        >
+            <DialogTitle id="invoice-dialog-title">Invoice</DialogTitle>
+            <DialogContent dividers style={{ width: "100%", height: "100%" }}>
+                <Invoice {...invoiceData} />
+            </DialogContent>
+
+            {/* <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+                <Button onClick={onDownload} color="primary">
+                    Download
+                </Button>
+            </DialogActions> */}
+        </Dialog>
+    );
+};
+
 
 export const MyBookings = () => {
     const theme = useTheme();
@@ -67,6 +99,60 @@ export const MyBookings = () => {
     };
 
     const list = getListForCategory();
+
+
+
+    const [openInvoice, setOpenInvoice] = useState(false);
+
+    const handleOpenInvoice = () => {
+        setOpenInvoice(true);
+    };
+
+    const handleCloseInvoice = () => {
+        setOpenInvoice(false);
+    };
+
+    const downloadPDF = () => {
+        // Invoice data
+        const invoiceData = {
+            date: '2023-11-16',
+            billingAddress: '123 Street, City, Country',
+            paymentMethod: 'Credit Card',
+            roomDetails: [
+                { type: 'Standard', number: '101' },
+                { type: 'Deluxe', number: '202' },
+            ],
+        };
+
+        // Generate the PDF content using @react-pdf/renderer
+        const content = (
+            <Document>
+                <Page size="A4">
+                    <Invoice {...invoiceData} />
+                </Page>
+            </Document>
+        );
+
+        // Generate PDF blob and trigger download
+        const asPdf = pdf(content);
+        asPdf.toBlob().then((blob) => {
+            saveAs(blob, 'invoice.pdf');
+        }).catch((error) => {
+            console.error("Error generating PDF:", error);
+        });
+    };
+
+    const invoiceData = {
+        date: '2023-11-16',
+        billingAddress: '123 Street, City, Country',
+        paymentMethod: 'Credit Card',
+        roomDetails: [
+            { type: 'Standard', number: '101' },
+            { type: 'Deluxe', number: '202' },
+        ],
+    };
+
+
 
     return (
         <section className="paddingmyBk">
@@ -136,11 +222,18 @@ export const MyBookings = () => {
                                                         <Button
                                                             className='rmbtn'
                                                             variant="contained"
-                                                            component={Link}
                                                             size="small"
+                                                            onClick={handleOpenInvoice}
                                                             style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
-                                                        >Invoice
+                                                        >
+                                                            Invoice
                                                         </Button>
+                                                        <InvoiceDialog
+                                                            open={openInvoice}
+                                                            onClose={handleCloseInvoice}
+                                                            onDownload={downloadPDF}
+                                                            invoiceData={invoiceData}
+                                                        />
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

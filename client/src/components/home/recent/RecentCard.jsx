@@ -1,6 +1,7 @@
 import React from "react"
 import { useEffect, useState } from "react";
 import axios from "axios"
+import { Link } from "react-router-dom";
 
 const RecentCard = () => {
 
@@ -35,9 +36,18 @@ const RecentCard = () => {
                 <h4>{room.rtype}</h4>
                 <div className='category flex'>
                   <span style={{ background: room.status === "Available" ? "#25b5791a" : "#ff98001a", color: room.status === "Available" ? "#25b579" : "#ff9800" }}>{room.status === "Available" ? "Available" : "Unvailable"}</span>
-                  <span className="booking" style={{ background: room.status === "Available" ? "#25b5791a" : "#ff98001a", color: room.status === "Available" ? "#25b579" : "#ff9800" }}>
-                    {room.status === "Available" ? "Book Now" : "Book Now"}
-                  </span>
+
+                  <Link
+                    to={{
+                      pathname: '/select-room',
+                      // Pass roomData as part of the location state
+                    }}
+                    state={room}
+                  >
+                    <span className="booking" style={{ background: room.status === "Available" ? "#25b5791a" : "#ff98001a", color: room.status === "Available" ? "#25b579" : "#ff9800" }}>
+                      {room.status === "Available" ? "Book Now" : "Book Now"}
+                    </span>
+                  </Link>
 
                 </div>
               </div>

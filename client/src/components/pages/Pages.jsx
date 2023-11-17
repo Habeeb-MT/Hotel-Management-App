@@ -54,7 +54,7 @@ const Pages = () => {
           <Route exact path='/book/rooms' element={<ProtectedRoute><BookRooms /></ProtectedRoute>} />
           <Route exact path='/allrooms' element={<ProtectedRoute><AllRooms /></ProtectedRoute>} />
           <Route exact path='/guests' element={<ProtectedRoute><GuestList /></ProtectedRoute>} />
-          <Route exact path='/select' element={<ProtectedRoute><SelectRoom /></ProtectedRoute>} />
+          <Route exact path='/select-room' element={<ProtectedRoute><SelectRoom /></ProtectedRoute>} />
           <Route exact path='/mybooking' element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
           <Route exact path='/guestDetails' element={<ProtectedRoute><GuestDetails /></ProtectedRoute>} />
         </Routes>

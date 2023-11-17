@@ -4,9 +4,13 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Heading from '../common/Heading'
 import "./BooksRooms.css"
-
+import { Link, useLocation } from 'react-router-dom';
 
 export const GuestDetails = ({ onAddGuest }) => {
+
+    const location = useLocation();
+    const room = location.state || {};
+
     const [guests, setGuests] = useState([
         {
             name: '',
@@ -75,14 +79,17 @@ export const GuestDetails = ({ onAddGuest }) => {
                                 </Button>
 
                             </div>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                type="submit"
-                                size='md'
-                            >
-                                Pay Now
-                            </Button>
+
+                            <Link to={'/book/rooms'} state={room}>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    type="submit"
+                                    size='md'
+                                >
+                                    Pay Now
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </form>
