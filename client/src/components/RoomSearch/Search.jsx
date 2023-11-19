@@ -11,6 +11,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from "dayjs";
 
 function getStyles(name, personName, theme) {
     return {
@@ -109,9 +110,10 @@ export const SingleSelect = ({ options, selectedValue, onChange }) => {
 export const Search = () => {
     const [selectedOccupancy, setSelectedOccupancy] = React.useState([]);
     const [selectedSuiteType, setSelectedSuiteType] = React.useState([]);
-    const [ac, setAc] = React.useState("");
-    const [selectedAvai, setSelectedAvai] = React.useState("");
     const [selectedRate, setSelectedRate] = React.useState([]);
+    const [startDate, setStartDate] = React.useState();
+    const [endDate, setEndDate] = React.useState();
+
 
     const handleOccupancyChange = (event) => {
         setSelectedOccupancy(event.target.value);
@@ -121,14 +123,41 @@ export const Search = () => {
         setSelectedSuiteType(event.target.value);
     };
 
-    const handleAvaiChange = (event) => {
-        setSelectedAvai(event.target.value);
-    };
+
     const handleRateChange = (event) => {
         setSelectedRate(event.target.value);
     };
-    const handleAcChange = (event) => {
-        setAc(event.target.value);
+
+    const formatSQLDate = (date) => {
+        if (date instanceof Date && !isNaN(date)) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        } else {
+            console.error('Invalid date:', date);
+            return null; // or any other default value or handling you prefer
+        }
+    };
+
+
+    const handleStartDateChange = (newDate) => {
+        if (newDate) {
+            const formattedDate = dayjs(newDate).format('YYYY-MM-DD');
+            setStartDate(formattedDate);
+        } else {
+            setStartDate(null); // or any other handling you prefer for null dates
+        }
+    };
+
+    const handleEndDateChange = (newDate) => {
+        if (newDate) {
+            const formattedDate = dayjs(newDate).format('YYYY-MM-DD');
+            setEndDate(formattedDate);
+        } else {
+            setEndDate(null); // or any other handling you prefer for null dates
+        }
     };
 
     return (
@@ -154,22 +183,25 @@ export const Search = () => {
                         selectedValues={selectedRate}
                         onChange={handleRateChange}
                     />
-                    <SingleSelect
-                        options={{ label: 'AC/non-AC', values: filterOptions.ac }}
-                        selectedValue={ac}
-                        onChange={handleAcChange}
-                    />
 
                 </div>
                 <div className='box'>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']} >
-                            <DatePicker label="Check-In Date" />
+                            <DatePicker
+                                label="Check-In Date"
+                                value={startDate || null} // Ensure it's either null or a date value
+                                onChange={handleStartDateChange}
+                            />
                         </DemoContainer>
                     </LocalizationProvider>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']} >
-                            <DatePicker label="Check-Out Date" />
+                            <DatePicker
+                                label="Check-Out Date"
+                                value={endDate || null} // Set the selected value
+                                onChange={handleEndDateChange} // Handle change event
+                            />
                         </DemoContainer>
                     </LocalizationProvider>
                 </div>

@@ -1,33 +1,36 @@
-import { UserContext } from "../../contexts/UserContext";
 import "./Dashboard.scss";
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { FaUsers } from 'react-icons/fa'
 import { FaBookOpen } from "react-icons/fa";
 import { FaBookDead } from 'react-icons/fa'
-import { TableMini } from "../TableMini/table";
+import { TableMini } from "../TableMini/TableMini";
+import { TimerComponent } from "./TmerComponent";
+
 
 export const Dashboard = () => {
 
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentDateTime(new Date());
-        }, 1000);
+    const [formattedDateTime, setFormattedDateTime] = useState('');
 
-        return () => {
-            clearInterval(interval);
+    const updateDateTime = (dateTime) => {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
         };
-    }, []);
+        const formattedDateTime = dateTime.toLocaleString('en-US', options);
+        setFormattedDateTime(formattedDateTime);
+    };
 
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
-    const formattedDateTime = currentDateTime.toLocaleString('en-US', options);
-    const { isAdmin } = useContext(UserContext)
+    const serviceType = "Booking";
 
     return (
         <div className='content'>
             <div className="topsection">
                 <h3>Hello <span>Admin</span></h3>
-                <h5>{formattedDateTime}</h5>
+                <h5><TimerComponent onUpdateDateTime={updateDateTime} /></h5>
             </div>
             <div className="middlesection">
                 <div className="stats">
@@ -67,12 +70,7 @@ export const Dashboard = () => {
                 </div>
             </div>
             <div className="bottomsection">
-                {/* {isAdmin && <div className="table userTable"><UsersListMini /></div>}
-                <div className="table bookTable"><BooksListMini /></div>
-                {!isAdmin && <div className="table mybookTable"><MyBooksListMini /></div>} */}
-                <TableMini />
-                <TableMini />
-
+                <TableMini serviceType={serviceType} />
             </div>
         </div>
     )

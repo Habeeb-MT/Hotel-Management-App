@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import "./BooksRooms.css"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,22 +8,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Typography, Button, Card, CardContent } from '@mui/material';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const SelectRoom = () => {
 
     const location = useLocation();
     const room = location.state || {}; // Destructure the state or set default to empty object
 
+    const [roomOpt, setRoomOpt] = useState('roomOnly'); // Initial room option
+    const navigate = useNavigate();
 
-    const roomList = [
-        {
-            name: "Super Deluxe Suite",
-            img: "",
-            occupancy: 2,
-            area: "200 sqft",
-        },
-    ];
+    const handleRoomOption = (newOption) => {
+        setRoomOpt(newOption);
+        navigate(`/guestDetails`, {
+            state: { ...room, roomOpt: newOption }
+        });
+    }
 
     return (
         <section className='padding1'>
@@ -37,7 +37,7 @@ export const SelectRoom = () => {
                             <Table aria-label="simple table">
                                 <TableHead className='tablehead'>
                                     <TableRow>
-                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center" rowSpan={roomList.length * 3}>Room Type</TableCell>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center" rowSpan={3}>Room Type</TableCell>
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Options</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Rate</TableCell>
                                     </TableRow>
@@ -68,11 +68,11 @@ export const SelectRoom = () => {
                                                     </div>
                                                     <Button
                                                         variant="contained"
-                                                        component={Link}
                                                         size="small"
-                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
+                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px", color: "white" }}
+                                                        onClick={() => handleRoomOption('roomOnly')}
                                                     >
-                                                        <Link to={'/guestDetails'} state={room} style={{ color: "white" }}>Book Now</Link>
+                                                        Book Now
                                                     </Button>
                                                 </>
                                             </TableCell>
@@ -94,11 +94,11 @@ export const SelectRoom = () => {
                                                     </div>
                                                     <Button
                                                         variant="contained"
-                                                        component={Link}
                                                         size="small"
-                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
+                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px", color: "white" }}
+                                                        onClick={() => handleRoomOption('room+Breakfast')}
                                                     >
-                                                        <Link to={'/guestDetails'} state={room} style={{ color: "white" }}>Book Now</Link>
+                                                        Book Now
                                                     </Button>
                                                 </>
                                             </TableCell>
@@ -120,11 +120,11 @@ export const SelectRoom = () => {
                                                     </div>
                                                     <Button
                                                         variant="contained"
-                                                        component={Link}
                                                         size="small"
-                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
+                                                        style={{ background: "#2a9942", margin: "1px", fontSize: "10px", color: "white" }}
+                                                        onClick={() => handleRoomOption('room+B+L/D')}
                                                     >
-                                                        <Link to={'/guestDetails'} state={room} style={{ color: "white" }}>Book Now</Link>
+                                                        Book Now
                                                     </Button>
                                                 </>
                                             </TableCell>

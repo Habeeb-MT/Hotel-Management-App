@@ -4,19 +4,14 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Heading from '../common/Heading'
 import "./BooksRooms.css"
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export const GuestDetails = ({ onAddGuest }) => {
 
     const location = useLocation();
     const room = location.state || {};
 
-    const [guests, setGuests] = useState([
-        {
-            name: '',
-            email: '',
-        },
-    ]);
+    const [guests, setGuests] = useState([]);
 
     const handleAddGuest = () => {
         setGuests([...guests, { name: '', email: '' }]);
@@ -43,10 +38,17 @@ export const GuestDetails = ({ onAddGuest }) => {
         ]);
     };
 
+    const navigate = useNavigate();
+    const gotoPayment = () => {
+        navigate('/book/rooms', {
+            state: { ...room, guests }
+        })
+    }
+
     return (
         <div className="padding1">
             <div className="container">
-                <form onSubmit={handleSubmit} >
+                <form  >
                     <div className="form">
                         <Heading title="Guest Details" />
                         <div className="sect">
@@ -80,16 +82,15 @@ export const GuestDetails = ({ onAddGuest }) => {
 
                             </div>
 
-                            <Link to={'/book/rooms'} state={room}>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    type="submit"
-                                    size='md'
-                                >
-                                    Pay Now
-                                </Button>
-                            </Link>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                type="submit"
+                                size='md'
+                                onClick={gotoPayment}
+                            >
+                                Pay Now
+                            </Button>
                         </div>
                     </div>
                 </form>

@@ -17,7 +17,7 @@ CREATE TABLE users(
 -- );
 
 CREATE TABLE rooms (
-  rnumber VARCHAR(20) PRIMARY KEY,
+  rnumber VARCHAR(10) PRIMARY KEY,
   availability INT,
   rtype VARCHAR(20),
   rate VARCHAR(5),
@@ -29,4 +29,16 @@ CREATE TABLE rooms (
   status VARCHAR(10),
   description VARCHAR(100),
   pic VARCHAR(30)
+);
+
+CREATE TABLE service (
+  serviceId SERIAL PRIMARY KEY,
+  charge INT, 
+  serviceType VARCHAR(20),
+  guestID VARCHAR(10),
+  adminID VARCHAR(10),
+  roomID VARCHAR(10),
+  startDate DATE,
+  endDate DATE,
+  status VARCHAR(10)
 );
