@@ -34,7 +34,7 @@ const MenuProps = {
 
 
 const filterOptions = {
-    occupancy: ['1 person', '2 persons', '3 persons', '4 persons'],
+    occupancy: ['1', '2', '3', '4'],
     suiteType: ['Single Suite', 'Double Suite', 'Luxury Suite', 'Presidential Suite'],
     ac: ['AC', 'Non-AC'],
     avai: ['Available', 'Unavailable'],
@@ -173,7 +173,7 @@ export const Search = () => {
                         onChange={handleSuiteTypeChange}
                     />
                     <MultipleSelect
-                        options={{ label: 'Occupancy', values: filterOptions.occupancy }}
+                        options={{ label: 'Occupancy(Person)', values: filterOptions.occupancy }}
                         selectedValues={selectedOccupancy}
                         onChange={handleOccupancyChange}
                     />
