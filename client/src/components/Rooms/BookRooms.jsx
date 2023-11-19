@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Heading from '../common/Heading'
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import "./BooksRooms.css"
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -9,19 +8,9 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { useLocation } from 'react-router-dom';
-
-export default function ColorButtons() {
-    return (
-        <Stack direction="row" spacing={2}>
-            <Button variant="contained" color="success">
-                Pay Now
-            </Button>
-        </Stack>
-    );
-}
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function getStyles(name, personName, theme) {
     return {
@@ -85,6 +74,21 @@ export const BookRooms = () => {
 
     const location = useLocation();
     const room = location.state || null;
+    console.log(room)
+
+    const [paymentInfo, setPaymentInfo] = useState({
+        name: '',
+        billingAddress: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+        upiId: ''
+    });
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setPaymentInfo({ ...paymentInfo, [name]: value });
+    };
 
 
     const [selectedPayment, setSelectedPayment] = useState('');
@@ -97,21 +101,81 @@ export const BookRooms = () => {
         if (selectedPayment === 'Cedit/Debit Card') {
             return (
                 <div className="subcontainer">
-                    <TextField id="outlined-basic" label="Card Number" variant="outlined" />
-                    <TextField id="outlined-basic" label="Expiry Date" variant="outlined" />
-                    <TextField id="outlined-basic" label="CVV" variant="outlined" />
+                    <TextField
+                        id="cardNumber"
+                        name="cardNumber"
+                        label="Card Number"
+                        variant="outlined"
+                        value={paymentInfo.cardNumber}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        id="expiryDate"
+                        name="expiryDate"
+                        label="Expiry Date"
+                        variant="outlined"
+                        value={paymentInfo.expiryDate}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        id="cvv"
+                        name="cvv"
+                        label="Card Number"
+                        variant="outlined"
+                        value={paymentInfo.cvv}
+                        onChange={handleInputChange}
+                    />
                 </div>
             );
         } else if (selectedPayment === 'UPI') {
             return (
                 <div className="subcontainer">
-                    Display UPI QR code or relevant UPI payment details
+                    <TextField
+                        id="upiId"
+                        name="upiId"
+                        label="UPI-ID"
+                        variant="outlined"
+                        value={paymentInfo.upiId}
+                        onChange={handleInputChange}
+                    />
                     {/* <img src="your-qrcode-image.png" alt="UPI QR Code" /> */}
                 </div>
             );
         }
         return null;
     };
+
+    const navigate = useNavigate();
+
+    const gotoMyBooking = async () => {
+
+        try {
+            let charge;
+            if (room.roomOpt === "roomOnly") charge = parseInt(room.rate);
+            if (room.roomOpt === "room+Breakfast") charge = parseInt(room.rate) + 1000;
+            if (room.roomOpt === "room+B+L/D") charge = parseInt(room.rate) + 2000;
+
+            let response = await axios.post(`/api/v1/service/makeservice`, {
+                charge: charge, serviceType: "Booking", guestId: room.guestid
+            });
+
+            if (response && response.data.success) {
+                console.log("Request added successfully:", response.data);
+            } else {
+                console.log("error");
+            }
+
+            navigate("/mybooking", {
+                state: { ...room, paymentInfo }
+            })
+
+        } catch (error) {
+            console.error("Error adding Request:", error);
+        }
+
+
+
+    }
 
     return (
         <section className='padding1'>
@@ -134,8 +198,22 @@ export const BookRooms = () => {
                         <Heading title="Payment Details" />
                         <div className="sect">
                             <div className="subcontainer">
-                                <TextField id="outlined-basic" label="Name" variant="outlined" />
-                                <TextField id="outlined-basic" label="Billing Address" variant="outlined" />
+                                <TextField
+                                    id="outlined-basic"
+                                    name="name"
+                                    label="Name"
+                                    variant="outlined"
+                                    value={paymentInfo.name}
+                                    onChange={handleInputChange}
+                                />
+                                <TextField
+                                    id="outlined-basic"
+                                    name="billingAddress"
+                                    label="Billing Address"
+                                    variant="outlined"
+                                    value={paymentInfo.billingAddress}
+                                    onChange={handleInputChange}
+                                />
                                 <SingleSelect
                                     options={{ label: 'Payment Options', values: paymentOpt.map(option => option.label) }}
                                     selectedValue={selectedPayment}
@@ -145,7 +223,9 @@ export const BookRooms = () => {
                             <div className="subcontainer">
                                 {renderPaymentDetails()}
                             </div>
-                            <ColorButtons />
+                            <Button variant="contained" color="success" onClick={gotoMyBooking}>
+                                Pay Now
+                            </Button>
                         </div>
                     </div>
                 </form>

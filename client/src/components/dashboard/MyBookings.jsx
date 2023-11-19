@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Dashboard.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -29,20 +29,21 @@ const InvoiceDialog = ({ open, onClose, onDownload, invoiceData }) => {
                 <Invoice {...invoiceData} />
             </DialogContent>
 
-            {/* <DialogActions>
+            <DialogActions>
                 <Button onClick={onClose} color="primary">
                     Close
                 </Button>
-                <Button onClick={onDownload} color="primary">
-                    Download
-                </Button>
-            </DialogActions> */}
+            </DialogActions>
         </Dialog>
     );
 };
 
 
 export const MyBookings = () => {
+
+    const location = useLocation();
+    const room = location.state || {};
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
