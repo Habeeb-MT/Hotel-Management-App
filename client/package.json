@@ -6,11 +6,13 @@
   "dependencies": {
     "@mui/icons-material": "^5.14.14",
     "@mui/x-date-pickers": "^6.16.2",
+    "@react-pdf/renderer": "^3.1.14",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
     "dayjs": "^1.11.10",
+    "file-saver": "^2.0.5",
     "mixin": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

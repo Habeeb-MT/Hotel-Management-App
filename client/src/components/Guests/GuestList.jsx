@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,32 +8,34 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const GuestList = () => {
-    const { isAdmin } = useContext(UserContext);
 
-    const { usersList } = useContext(UserContext);
+    const [gList, setGList] = useState([]);
 
-    // const [openView, setOpenView] = useState(false)
-    // const handleCloseView = () => {
-    //     setOpenView(false);
-    // };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("/api/v1/user/fetchGuest");
+                if (response) {
+                    const jsonData = response.data.guests;
+                    setGList(jsonData);
+                }
+            } catch (err) {
+                console.error(err.message);
+            }
+        };
+
+        fetchData();
+    }, []);
 
 
     return (
         <div>
-            <div className="heading" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Rooms Lists</Typography>
-                {/* {isAdmin ? (
-                    <Typography style={{ textAlign: "center", margin: "20px 40px" }}>
-                        <AddUserForm />
-                    </Typography>
-                ) : ("")} */}
-            </div>
-            {usersList.length != 1 ? (
+            <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Guests List</Typography>
+            {gList.length != 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -48,6 +50,8 @@ export const GuestList = () => {
                                         <TableCell className='tablet' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Email</TableCell>
                                         {window.innerWidth >= 1050 && <>
                                             <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Phone</TableCell>
+                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Accompany</TableCell>
+
                                         </>}
                                         <TableCell className='minitablet' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Status</TableCell>
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
@@ -55,7 +59,7 @@ export const GuestList = () => {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        usersList.map((user, index) => (
+                                        gList.map((user, index) => (
                                             <TableRow
                                                 key={user?.lid}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -64,44 +68,37 @@ export const GuestList = () => {
                                                 <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>
                                                     {<div className='user'>
                                                         <img src={user?.photoURL} alt="" />
-                                                        <span>{user?.displayName}</span></div>
+                                                        <span>{user?.name}</span></div>
                                                     }
                                                 </TableCell>
                                                 <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.room}</TableCell>
-                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.gid}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.id}</TableCell>
                                                 <TableCell className='tablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.email}</TableCell>
                                                 {window.innerWidth >= 1050 && <>
-                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.college}</TableCell>
+                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.phone}</TableCell>
+                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">
+                                                        {/* {user.accompaniers.map((accompanier, accompanierIndex) => (
+                                                        ))} */}
+                                                        <TableRow >
+                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
+                                                        </TableRow>
+                                                        <TableRow >
+                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
+                                                        </TableRow>
+                                                        <TableRow >
+                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
+                                                        </TableRow>
+                                                    </TableCell>
                                                 </>}
-                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.issued}</TableCell>
+                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center"></TableCell>
                                                 <TableCell align="center">
                                                     <Button
+                                                        className='rmbtn'
                                                         variant="contained"
                                                         component={Link}
                                                         size="small"
                                                         style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
-                                                        onClick={() => {
-                                                            // setOpenView(true)
-                                                        }}
-                                                        state={user}
-                                                    >View</Button>
-                                                    {isAdmin && <>
-                                                        <Button
-                                                            className='rmbtn'
-                                                            variant="contained"
-                                                            component={Link}
-                                                            size="small"
-                                                            style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                        >Contact</Button>
-                                                        {/* <Button
-                                                            className='rmbtn'
-                                                            variant="contained"
-                                                            component={Link}
-                                                            size="small"
-                                                            style={{ background: "red", margin: "1px", fontSize: "10px" }}
-                                                        >Contact</Button> */}
-                                                    </>}
-                                                    {/* <ViewUser openView={openView} handleCloseView={handleCloseView} /> */}
+                                                    >Contact</Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))

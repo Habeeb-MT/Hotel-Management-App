@@ -39,3 +39,20 @@
     gap: 50px;
     justify-content: space-between;
 }
+
+.roomimg{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.roomimg img{
+    display: flex;
+    margin-bottom: 20px;
+    width: 250px;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 0.2px 0.1px 0.3px black;
+}

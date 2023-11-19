@@ -9,12 +9,12 @@ CREATE TABLE users(
 );
 
 
-CREATE TABLE logs (
-  id SERIAL PRIMARY KEY,
-  user_id INT,
-  login_time TIMESTAMPTZ DEFAULT NOW(),
-  logout_time TIMESTAMPTZ
-);
+-- CREATE TABLE logs (
+--   id SERIAL PRIMARY KEY,
+--   user_id INT,
+--   login_time TIMESTAMPTZ DEFAULT NOW(),
+--   logout_time TIMESTAMPTZ
+-- );
 
 CREATE TABLE rooms (
   rnumber VARCHAR(20) PRIMARY KEY,
@@ -27,5 +27,6 @@ CREATE TABLE rooms (
   startDate DATE,
   endDate DATE,
   status VARCHAR(10),
-  pic BYTEA
+  description VARCHAR(100),
+  pic VARCHAR(30)
 );

@@ -1,24 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import { BooksContext } from '../Contexts/BooksContext';
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-// import { UserContext } from '../Contexts/UserContext';
-import { RiImageAddFill } from "react-icons/ri";
 import { Button } from "@mui/material";
 import "./Room.scss";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 
-export const AddRoomForm = ({ open, handleClose }) => {
+export const AddRoomForm = ({ open, handleClose, onRoomAdded, roomToEdit }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
     const [err, setErr] = useState(false);
@@ -26,58 +19,72 @@ export const AddRoomForm = ({ open, handleClose }) => {
     const [type, setType] = useState("");
     const [cap, setCap] = useState("");
     const [num, setNum] = useState("");
-    const [ac, setAc] = useState("");
     const [price, setPrice] = useState("");
     const [descript, setDescrit] = useState("");
-    const [pic, setPic] = useState(null);
+    const [pic, setPic] = useState("");
 
 
-    const convertFileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+    useEffect(() => {
 
-            reader.onload = () => {
-                resolve(reader.result.split(",")[1]); // Extract base64 part
-            };
-
-            reader.onerror = (error) => {
-                reject(error);
-            };
-
-            reader.readAsDataURL(file);
-        });
-    };
-
+        if (roomToEdit) {
+            setType(roomToEdit.rtype);
+            setCap(roomToEdit.occupancy);
+            setNum(roomToEdit.rnumber);
+            setPrice(roomToEdit.rate);
+            setDescrit(roomToEdit.description);
+            setPic(roomToEdit.pic);
+        }
+        else {
+            setType("");
+            setCap("");
+            setNum("");
+            setPrice("");
+            setDescrit("");
+            setPic("");
+        }
+    }, [roomToEdit, open]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (type === "" || cap === "" || num === "" || descript === 0 || pic == null || price === 0) {
+
+        if (type === "" || cap === "" || num === "" || descript === 0 || price === 0 || pic === "") {
             return;
         }
 
         try {
+            let response;
+            if (roomToEdit) {
+                const updatedFields = {};
+                if (roomToEdit.rtype !== type) updatedFields.rtype = type;
+                if (roomToEdit.occupancy !== cap) updatedFields.occupancy = cap;
+                if (roomToEdit.rate !== price) updatedFields.rate = price;
+                if (roomToEdit.pic !== pic) updatedFields.pic = pic;
+                if (roomToEdit.description !== descript) updatedFields.description = descript;
 
-            const picBase64 = pic ? await convertFileToBase64(pic) : null;
+                response = await axios.put(`/api/v1/room/editroom/${roomToEdit.rnumber}`, updatedFields);
 
-            const response = await axios.post("/api/v1/room/addroom", {
-                num,
-                type,
-                cap,
-                price,
-                pic: picBase64, // Send the base64-encoded pic
-            });
-            if (response && response.data.success) {
-                console.log("Room added successfully:", response.data);
-                handleClose();
+            } else {
+                response = await axios.post("/api/v1/room/addroom", {
+                    num,
+                    type,
+                    cap,
+                    price,
+                    pic,
+                    descript,
+                });
             }
-            else {
-                console.log("error")
+            if (response && response.data.success) {
+                console.log("Room added/edited successfully:", response.data);
+                handleClose();
+            } else {
+                console.log("error");
             }
         } catch (error) {
             setErr(error);
-            console.error("Error adding room:", error);
+            console.error("Error adding/editing room:", error);
         }
     };
+
 
     return (
         <div>
@@ -101,6 +108,7 @@ export const AddRoomForm = ({ open, handleClose }) => {
                             label="Type"
                             variant="outlined"
                             onChange={(e) => setType(e.target.value)}
+                            value={type}
                             fullWidth
                         />
                         <div className="columns">
@@ -110,12 +118,14 @@ export const AddRoomForm = ({ open, handleClose }) => {
                                     label="Price"
                                     variant="outlined"
                                     onChange={(e) => setPrice(e.target.value)}
+                                    value={price}
                                 />
                                 <TextField
                                     id="outlined-basic"
                                     label="Capacity"
                                     variant="outlined"
                                     onChange={(e) => setCap(e.target.value)}
+                                    value={cap}
                                 />
                             </div>
                             <div className="col">
@@ -124,21 +134,15 @@ export const AddRoomForm = ({ open, handleClose }) => {
                                     label="Room No"
                                     variant="outlined"
                                     onChange={(e) => setNum(e.target.value)}
+                                    value={num}
                                 />
-                                <FormControl fullWidth variant="outlined">
-                                    <InputLabel id="ac-non-ac-label">AC/non-AC</InputLabel>
-                                    <Select
-                                        labelId="ac-non-ac-label"
-                                        id="ac-non-ac"
-                                        value={ac}
-                                        onChange={(e) => setAc(e.target.value)}
-                                        label="AC/non-AC"
-                                    >
-                                        <MenuItem value="">Select</MenuItem>
-                                        <MenuItem value="AC">AC</MenuItem>
-                                        <MenuItem value="non-AC">non-AC</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <TextField
+                                    id="outlined-basic"
+                                    label="Room Pic URL"
+                                    variant="outlined"
+                                    onChange={(e) => setPic(e.target.value)}
+                                    value={pic}
+                                />
                             </div>
                         </div>
                         <TextField
@@ -148,17 +152,8 @@ export const AddRoomForm = ({ open, handleClose }) => {
                             rows={4}
                             fullWidth
                             onChange={e => setDescrit(e.target.value)}
+                            value={descript}
                         />
-                        <input
-                            type="file"
-                            id="file"
-                            style={{ display: "none" }}
-                            onChange={(e) => setPic(e.target.files[0])}
-                        />
-                        <label htmlFor="file">
-                            <RiImageAddFill />
-                            <span>Add Pic</span>
-                        </label>
                         <DialogActions>
                             <Button
                                 variant="contained"
@@ -172,7 +167,7 @@ export const AddRoomForm = ({ open, handleClose }) => {
                                     fontSize: "10px",
                                 }}
                             >
-                                Add
+                                {roomToEdit ? "Update" : "Add"}
                             </Button>
                             <Button
                                 variant="contained"

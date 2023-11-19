@@ -12,18 +12,32 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/auth';
 import { AddRoomForm } from './AddRoomForm';
 import axios from 'axios';
-
+import ViewRoom from "./ViewRoom";
 
 export const AllRooms = () => {
     const { isManager } = useAuth();
 
-    // const [openView, setOpenView] = useState(false)
-    // const handleCloseView = () => {
-    //     setOpenView(false);
-    // };
+    const [openViews, setOpenViews] = useState({});
+    const handleCloseView = (rnumber) => {
+        setOpenViews((prevOpenViews) => ({ ...prevOpenViews, [rnumber]: false }));
+    };
 
     const [open, setOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
+    const [roomToEdit, setRoomToEdit] = useState(null);
+
+    const handleRoomAdded = (newRoom) => {
+        setRooms((prevRooms) => [...prevRooms, newRoom]);
+    };
+
+    const handleEdit = (room) => {
+        setRoomToEdit(room);
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setRoomToEdit(null);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,9 +55,16 @@ export const AllRooms = () => {
         fetchData();
     }, []);
 
-
-    const handleClose = () => {
-        setOpen(false);
+    const handleDelete = async (rnum) => {
+        try {
+            const response = await axios.delete(`/api/v1/room/deleteroom/${rnum}`);
+            if (response.data.success) {
+                // Remove the deleted room from the local state
+                setRooms((prevRooms) => prevRooms.filter((room) => room.rnumber !== rnum));
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
     };
 
     return (
@@ -58,15 +79,14 @@ export const AllRooms = () => {
                             size="small"
                             onClick={() => {
                                 setOpen(true)
+                                setRoomToEdit(null)
                             }}
-                            style={{ background: "green", margin: "5px", color: "white", fontSize: "10px" }}
+                            style={{ background: "#2a9942", margin: "5px", color: "white", fontSize: "10px" }}
                         >Add Room</Button>
-                        <AddRoomForm open={open} handleClose={handleClose} />
-
                     </Typography>
                 ) : ("")}
             </div>
-            {rooms.length != 1 ? (
+            {rooms.length != 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -74,7 +94,7 @@ export const AllRooms = () => {
                             <Table aria-label="simple table">
                                 <TableHead className='tablehead'>
                                     <TableRow>
-                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">SI</TableCell>
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Room</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Occupancy</TableCell>
@@ -89,13 +109,13 @@ export const AllRooms = () => {
                                     {
                                         rooms.map((room, index) => (
                                             <TableRow
-                                                key={room?.lid}
+                                                key={room?.rnumber}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
-                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
+                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='left'>{index + 1}</TableCell>
                                                 <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>
                                                     {<div className='room'>
-                                                        <img src={room?.photoURL} alt="" />
+                                                        <img src={`/images/rooms/${room?.pic}.jpg`} alt="" />
                                                         <span>{room?.rtype}</span></div>
                                                     }
                                                 </TableCell>
@@ -104,7 +124,7 @@ export const AllRooms = () => {
                                                 {window.innerWidth >= 1050 && <>
                                                     <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.rate}</TableCell>
                                                 </>}
-                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{room.issued}</TableCell>
+                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center"></TableCell>
                                                 <TableCell align="center">
                                                     <Button
                                                         variant="contained"
@@ -112,10 +132,16 @@ export const AllRooms = () => {
                                                         size="small"
                                                         style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
                                                         onClick={() => {
-                                                            // setOpenView(true)
+                                                            setOpenViews((prevOpenViews) => ({ ...prevOpenViews, [room.rnumber]: true }));
                                                         }}
                                                         state={room}
                                                     >View</Button>
+                                                    <ViewRoom
+                                                        openView={openViews[room.rnumber] || false}
+                                                        handleCloseView={() => handleCloseView(room.rnumber)}
+                                                        room={room}
+                                                        handleEdit={handleEdit}
+                                                    />
                                                     {isManager && <>
                                                         <Button
                                                             className='rmbtn'
@@ -123,6 +149,7 @@ export const AllRooms = () => {
                                                             component={Link}
                                                             size="small"
                                                             style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
+                                                            onClick={() => handleEdit(room)}
                                                         >Edit</Button>
                                                         <Button
                                                             className='rmbtn'
@@ -130,14 +157,20 @@ export const AllRooms = () => {
                                                             component={Link}
                                                             size="small"
                                                             style={{ background: "red", margin: "1px", fontSize: "10px" }}
+                                                            onClick={() => handleDelete(room.rnumber)}
                                                         >Delete</Button>
                                                     </>}
-                                                    {/* <Viewroom openView={openView} handleCloseView={handleCloseView} /> */}
                                                 </TableCell>
                                             </TableRow>
                                         ))
                                     }
                                 </TableBody>
+                                <AddRoomForm
+                                    open={open}
+                                    handleClose={handleClose}
+                                    onRoomAdded={handleRoomAdded}
+                                    roomToEdit={roomToEdit}
+                                />
                             </Table>
                         </TableContainer>
                     </div>
