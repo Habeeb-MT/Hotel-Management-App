@@ -9,8 +9,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import dayjs from "dayjs";
 
 function getStyles(name, personName, theme) {
     return {
@@ -74,7 +75,6 @@ export const BookRooms = () => {
 
     const location = useLocation();
     const room = location.state || null;
-    console.log(room)
 
     const [paymentInfo, setPaymentInfo] = useState({
         name: '',
@@ -154,13 +154,20 @@ export const BookRooms = () => {
             if (room.roomOpt === "roomOnly") charge = parseInt(room.rate);
             if (room.roomOpt === "room+Breakfast") charge = parseInt(room.rate) + 1000;
             if (room.roomOpt === "room+B+L/D") charge = parseInt(room.rate) + 2000;
+            const date = dayjs(Date.now()).format('YYYY-MM-DD');
 
             let response = await axios.post(`/api/v1/service/makeservice`, {
-                charge: charge, serviceType: "Booking", guestId: room.guestid
+                charge: charge, serviceType: "Booking", guestId: room.guestid,
+                roomid: room.rnumber, startDate: room.startDate, endDate: room.endDate
             });
 
-            if (response && response.data.success) {
-                console.log("Request added successfully:", response.data);
+            const serviceId = response.data.serviceId
+            let response1 = await axios.post(`/api/v1/invoice/makeinvoice`, {
+                serviceId, paymentInfo, room, date
+            });
+
+            if (response && response1 && response.data.success && response1.data.success) {
+                console.log("Booking made successfully, Invoice made successfuly", response.data, response1.data);
             } else {
                 console.log("error");
             }
@@ -190,8 +197,8 @@ export const BookRooms = () => {
                                 <TextField id="outlined-basic" label="Rate" variant="outlined" value={room.rate} InputProps={{ readOnly: true }} />
                             </div>
                             <div className="subcontainer">
-                                <TextField id="outlined-basic" label="Check-In Date" variant="outlined" value={room.startdate} InputProps={{ readOnly: true }} />
-                                <TextField id="outlined-basic" label="Check-Out Date" variant="outlined" value={room.enddate} InputProps={{ readOnly: true }} />
+                                <TextField id="outlined-basic" label="Check-In Date" variant="outlined" value={room.startDate} InputProps={{ readOnly: true }} />
+                                <TextField id="outlined-basic" label="Check-Out Date" variant="outlined" value={room.endDate} InputProps={{ readOnly: true }} />
                                 <TextField id="outlined-basic" label="Outlined" variant="outlined" value={room.rtype} InputProps={{ readOnly: true }} />
                             </div>
                         </div>

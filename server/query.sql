@@ -42,3 +42,15 @@ CREATE TABLE service (
   endDate DATE,
   status VARCHAR(10)
 );
+
+CREATE TABLE invoice (
+  invoiceID SERIAL PRIMARY KEY,
+  invoiceType VARCHAR(20),
+  date DATE,
+  guestID VARCHAR(10),
+  amount INT, 
+  pMethod VARCHAR(20),
+  cardNumber VARCHAR(10),
+  upiID VARCHAR(10),
+  bAdress VARCHAR(30)
+);

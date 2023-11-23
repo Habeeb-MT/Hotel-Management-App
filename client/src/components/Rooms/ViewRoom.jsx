@@ -34,7 +34,7 @@ const ViewRoom = ({ openView, handleCloseView, room, handleEdit }) => {
                                 </tr>
                                 <tr>
                                     <th>Rate:</th>
-                                    <td>{room?.rate}</td>
+                                    <td>&#8377;{room?.rate}/Night</td>
                                 </tr>
                                 <tr>
                                     <th>Description:</th>
