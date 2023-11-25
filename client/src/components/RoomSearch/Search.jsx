@@ -37,7 +37,7 @@ const MenuProps = {
 const filterOptions = {
     occupancy: ['1', '2', '3', '4'],
     suiteType: ['Single Suite', 'Double Suite', 'Luxury Suite', 'Presidential Suite'],
-    ac: ['AC', 'Non-AC'],
+
     avai: ['Available', 'Unavailable'],
     rate: [{ name: '2000-4000', array: [2000, 4000] }, { name: '4000-6000', array: [4000, 6000] },{ name: '6000-10000', array: [6000, 10000] },{ name: '10k or more', array: [10000, 50000] }]
     // Add more filter options as needed
@@ -216,11 +216,7 @@ export const Search = () => {
                     selectedValues={selectedRate}
                     onChange={handleRateChange}
                     />
-                    <SingleSelect
-                        options={{ label: 'AC/non-AC', values: filterOptions.ac }}
-                        selectedValue={ac}
-                        onChange={handleAcChange}
-                    />
+                   
 
                 </div>
                 <div className='box'>
