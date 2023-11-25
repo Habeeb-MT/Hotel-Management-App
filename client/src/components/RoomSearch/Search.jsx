@@ -135,12 +135,24 @@ export const SingleSelect = ({ options, selectedValue, onChange }) => {
 
 
 
-export const Search = () => {
+export const Search = ({ onSearch }) => {
     const [selectedOccupancy, setSelectedOccupancy] = React.useState([]);
     const [selectedSuiteType, setSelectedSuiteType] = React.useState([]);
     const [selectedRate, setSelectedRate] = React.useState([]);
     const [startDate, setStartDate] = React.useState();
     const [endDate, setEndDate] = React.useState();
+
+
+    const getAllSelectedValues = () => {
+        return {
+            selectedOccupancy,
+            selectedSuiteType,
+            selectedRate,
+            startDate: startDate ? dayjs(startDate).format('YYYY-MM-DD') : null,
+            endDate: endDate ? dayjs(endDate).format('YYYY-MM-DD') : null,
+        };
+    };
+
 
 
     const handleOccupancyChange = (event) => {
@@ -156,26 +168,13 @@ export const Search = () => {
         setSelectedRate(event.target.value);
     };
 
-    const formatSQLDate = (date) => {
-        if (date instanceof Date && !isNaN(date)) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-
-            return `${year}-${month}-${day}`;
-        } else {
-            console.error('Invalid date:', date);
-            return null; // or any other default value or handling you prefer
-        }
-    };
-
 
     const handleStartDateChange = (newDate) => {
         if (newDate) {
             const formattedDate = dayjs(newDate).format('YYYY-MM-DD');
             setStartDate(formattedDate);
         } else {
-            setStartDate(null); // or any other handling you prefer for null dates
+            setStartDate(null);
         }
     };
 
@@ -184,9 +183,15 @@ export const Search = () => {
             const formattedDate = dayjs(newDate).format('YYYY-MM-DD');
             setEndDate(formattedDate);
         } else {
-            setEndDate(null); // or any other handling you prefer for null dates
+            setEndDate(null);
         }
     };
+
+    React.useEffect(() => {
+        const selectedValues = getAllSelectedValues();
+        onSearch(selectedValues);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedOccupancy, selectedSuiteType, selectedRate, startDate, endDate]);
 
     return (
         <div className='searchcontainer'>

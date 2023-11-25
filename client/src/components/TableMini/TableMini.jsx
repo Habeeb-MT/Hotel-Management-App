@@ -37,13 +37,7 @@ export const TableMini = ({ serviceType }) => {
 
             if (response && response.data && response.data.success) {
                 // Update serviceList to reflect the changes in UI
-                const updatedList = serviceList.map(service => {
-                    if (service.serviceId === serviceId) {
-                        return { ...service, status: "Booked" };
-                    }
-                    return service;
-                });
-                setServiceList(updatedList);
+                setServiceList((prevServiceList) => prevServiceList.filter((service) => service.serviceid !== serviceId));
             }
         } catch (error) {
             console.error("Error accepting booking:", error);
@@ -77,7 +71,7 @@ export const TableMini = ({ serviceType }) => {
                                         <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
                                         <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.servicetype}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.roomno}</TableCell>
+                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.roomid}</TableCell>
                                         <TableCell align="center">
                                             <Button
                                                 className='rmbtn'

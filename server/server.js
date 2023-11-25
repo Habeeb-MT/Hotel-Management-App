@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoute.js';
 import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoute.js';
 import serviceRoutes from './routes/serviceRoute.js';
+import invoiceRoutes from "./routes/invoiceRoutes.js"
 
 //config env
 dotenv.config();
@@ -23,6 +24,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/room", productRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/service", serviceRoutes);
+app.use("/api/v1/invoice", invoiceRoutes);
 
 //rest api
 app.get('/', (req, res) => {
