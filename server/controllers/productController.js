@@ -9,7 +9,7 @@ dotenv.config();
 
 export const productFiltersController = async (req, res) => {
   try {
-    const { selectedOccupancy, selectedSuiteType, ac, selectedAvai, selectedRate } = req.body;
+    const { selectedOccupancy, selectedSuiteType, selectedRate, startDate, endDate } = req.query;
 
     let values = [];
     let conditions = [];
@@ -17,25 +17,13 @@ export const productFiltersController = async (req, res) => {
 
     if (selectedOccupancy && selectedOccupancy.length > 0) {
       conditions.push(`occupancy = $${index}`);
-      values.push(selectedOccupancy);
+      values.push(selectedOccupancy[0]);
       index++;
     }
 
     if (selectedSuiteType && selectedSuiteType.length > 0) {
       conditions.push(`rtype = $${index}`);
-      values.push(selectedSuiteType);
-      index++;
-    }
-
-    if (ac && ac.length > 0) {
-      conditions.push(`ac = $${index}`);
-      values.push(ac);
-      index++;
-    }
-
-    if (selectedAvai && selectedAvai.length > 0) {
-      conditions.push(`availability = $${index}`);
-      values.push(selectedAvai);
+      values.push(selectedSuiteType[0]);
       index++;
     }
 
@@ -45,20 +33,34 @@ export const productFiltersController = async (req, res) => {
       index += 2;
     }
 
-    const query = {
-      text: `
+    if (startDate && endDate) {
+      conditions.push(`(startdate NOT BETWEEN $${index} AND $${index + 1} AND enddate NOT BETWEEN $${index} AND $${index + 1})`);
+      values.push(startDate, endDate);
+      index += 2;
+    }
+
+    const result = await client.query(
+      `
         SELECT *
         FROM rooms
-        ${conditions.length > 0 ? 'WHERE' : ''} ${conditions.join(' AND ')}
+        ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
       `,
-      values,
-    };
+      values
+    );
 
-    const result = await client.query(query);
+    console.log('Generated SQL Query:', `
+    SELECT *
+    FROM rooms
+    ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
+  `);
+
+    console.log('Query Values:', values);
+
     const rooms = result.rows;
 
     res.status(200).send({
       success: true,
+      message: "Filter works successfully.",
       rooms,
     });
   } catch (error) {
@@ -70,6 +72,7 @@ export const productFiltersController = async (req, res) => {
     });
   }
 };
+
 
 
 

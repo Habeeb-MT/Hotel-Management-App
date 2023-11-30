@@ -83,10 +83,16 @@ export const AllRooms = () => {
                             }}
                             style={{ background: "#2a9942", margin: "5px", color: "white", fontSize: "10px" }}
                         >Add Room</Button>
+                         <AddRoomForm
+                                    open={open}
+                                    handleClose={handleClose}
+                                    onRoomAdded={handleRoomAdded}
+                                    roomToEdit={roomToEdit}
+                                />
                     </Typography>
                 ) : ("")}
             </div>
-            {rooms.length != 0 ? (
+            {rooms.length !== 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -165,12 +171,7 @@ export const AllRooms = () => {
                                         ))
                                     }
                                 </TableBody>
-                                <AddRoomForm
-                                    open={open}
-                                    handleClose={handleClose}
-                                    onRoomAdded={handleRoomAdded}
-                                    roomToEdit={roomToEdit}
-                                />
+                               
                             </Table>
                         </TableContainer>
                     </div>

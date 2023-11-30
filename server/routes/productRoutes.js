@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 //filter product
-router.post("/product-filters", productFiltersController);
+router.get("/product-filters", productFiltersController);
 
 //search product
 router.get("/search/:keyword", searchProductController);
