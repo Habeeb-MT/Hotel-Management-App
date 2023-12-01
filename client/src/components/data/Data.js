@@ -82,7 +82,7 @@ export const navManager = [
   },
   {
     text: "Reports",
-    path: "/contact",
+    path: "/reports",
   },
 ]
 

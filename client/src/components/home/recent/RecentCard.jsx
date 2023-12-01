@@ -9,7 +9,7 @@ const RecentCard = ({ searchValues, res }) => {
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
-    if (res.length > 0) {
+    if (res?.length > 0) {
       setRooms(res);
     } else {
       const fetchData = async () => {
