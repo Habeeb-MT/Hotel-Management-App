@@ -14,6 +14,7 @@ export const SelectRoom = () => {
 
     const location = useLocation();
     const room = location.state || {}; // Destructure the state or set default to empty object
+    console.log(room)
 
     const [roomOpt, setRoomOpt] = useState('roomOnly'); // Initial room option
     const navigate = useNavigate();

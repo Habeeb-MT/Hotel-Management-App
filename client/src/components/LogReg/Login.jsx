@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import Back from '../common/Back';
 import img from "../images/abt.jpg"
 import { useAuth } from '../../contexts/auth';
+
 export const Login = () => {
 
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export const Login = () => {
                 });
                 console.log(auth)
                 localStorage.setItem("auth", JSON.stringify(res.data));
-                navigate(location.state || `/${res.data.user}/dashboard`);
+                navigate(location.state || `/dashboard`);
             } else {
                 // toast.error(res.data.message);
             }

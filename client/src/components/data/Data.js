@@ -24,7 +24,7 @@ export const nav = [
 export const navUser = [
   {
     text: "dashboard",
-    path: "/about",
+    path: "/dashboard",
   },
   {
     text: "Bookings",
@@ -47,7 +47,7 @@ export const navUser = [
 export const navRecep = [
   {
     text: "dashboard",
-    path: "/:id/dashboard",
+    path: "/dashboard",
   },
   {
     text: "Requests",
@@ -66,7 +66,7 @@ export const navRecep = [
 export const navManager = [
   {
     text: "dashboard",
-    path: "/:id/dashboard",
+    path: "/dashboard",
   },
   {
     text: "Requests",

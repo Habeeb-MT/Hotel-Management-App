@@ -49,7 +49,7 @@ const Pages = () => {
           <Route exact path='/register' element={<Register />} />
           <Route exact path='/rooms' element={<Blog />} />
           <Route exact path='/contact' element={<Contact />} />
-          <Route exact path='/:id/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route exact path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route exact path='/admin/rooms' element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
           <Route exact path='/book/rooms' element={<ProtectedRoute><BookRooms /></ProtectedRoute>} />
           <Route exact path='/allrooms' element={<ProtectedRoute><AllRooms /></ProtectedRoute>} />

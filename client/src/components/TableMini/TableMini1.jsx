@@ -12,14 +12,13 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from "../../contexts/auth";
 
-export const TableMini = () => {
+export const TableMini1 = () => {
     const [serviceList, setServiceList] = useState([])
-    const { auth } = useAuth();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/v1/room/fetchreserve/`);
+                const response = await axios.get(`/api/v1/service/fetchroomservice`);
                 if (response && response.data && response.data.services) {
                     const jsonData = response.data.services;
                     setServiceList(jsonData);
@@ -31,23 +30,22 @@ export const TableMini = () => {
 
         fetchData();
     }, []);
-    console.log(serviceList)
 
-    const acceptBooking = async (reserveId) => {
+    const acceptService = async (serviceId) => {
         try {
             // Make a PUT request to update service status to "Booked"
-            const response = await axios.put(`/api/v1/room/acceptBooking`, { reserveId });
+
+            const response = await axios.put(`/api/v1/service/acceptroomservice`, { serviceId });
 
             if (response && response.data && response.data.success) {
                 // Update serviceList to reflect the changes in UI
-                setServiceList((prevServiceList) => prevServiceList.filter((service) => service.reserveId !== reserveId));
+                setServiceList((prevServiceList) => prevServiceList.filter((service) => service.serviceid !== serviceId));
             }
         } catch (error) {
             console.error("Error accepting booking:", error);
             // Handle error scenario, display an error message or take appropriate action
         }
     };
-
 
     return (
         <div>
@@ -59,9 +57,9 @@ export const TableMini = () => {
                             <TableHead className='tablehead'>
                                 <TableRow>
                                     <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Guest-ID</TableCell>
+                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Guest-ID</TableCell>
                                     <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
-                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Date</TableCell>
+                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Service-Type</TableCell>
                                     <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -74,7 +72,7 @@ export const TableMini = () => {
                                         <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
                                         <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
                                         <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.rnumber}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.startdate?.slice(0, 10)} - {service?.enddate?.slice(0, 10)}</TableCell>
+                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.servicetype}</TableCell>
                                         <TableCell align="center">
                                             <Button
                                                 className='rmbtn'
@@ -82,7 +80,7 @@ export const TableMini = () => {
                                                 component={Link}
                                                 size="small"
                                                 style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                onClick={() => acceptBooking(service.reserveid)}
+                                                onClick={() => acceptService(service.serviceid)}
                                             >Accept</Button>
                                             <Button
                                                 className='rmbtn'

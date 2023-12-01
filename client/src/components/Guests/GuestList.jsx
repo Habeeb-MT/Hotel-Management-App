@@ -15,13 +15,35 @@ export const GuestList = () => {
 
     const [gList, setGList] = useState([]);
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get("/api/v1/user/fetchGuest");
-                if (response) {
+                if (response && response.data.success) {
                     const jsonData = response.data.guests;
-                    setGList(jsonData);
+
+                    // Fetch occupants for each guest and update the corresponding user object
+                    const updatedGuests = await Promise.all(
+                        jsonData.map(async (guest) => {
+                            try {
+                                const occupantResponse = await axios.get(`/api/v1/user/fetchOccupant`, { params: { guestId: guest.id } });
+                                if (occupantResponse.data.success) {
+                                    const occupants = occupantResponse.data.occupants;
+                                    console.log(occupants)
+                                    return {
+                                        ...guest,
+                                        occupants: occupants // Add occupants to the user object
+                                    };
+                                }
+                            } catch (err) {
+                                console.error(`Error fetching occupants for guest ${guest.id}: ${err.message}`);
+                                return guest; // Return original guest object if occupants fetch fails
+                            }
+                        })
+                    );
+
+                    setGList(updatedGuests);
                 }
             } catch (err) {
                 console.error(err.message);
@@ -30,6 +52,16 @@ export const GuestList = () => {
 
         fetchData();
     }, []);
+
+
+
+
+
+
+
+
+
+
 
 
     return (
@@ -49,11 +81,9 @@ export const GuestList = () => {
                                         <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Guest-ID</TableCell>
                                         <TableCell className='tablet' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Email</TableCell>
                                         {window.innerWidth >= 1050 && <>
-                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Phone</TableCell>
-                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Accompany</TableCell>
+                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Accompany</TableCell>
 
                                         </>}
-                                        <TableCell className='minitablet' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Status</TableCell>
                                         <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -71,26 +101,20 @@ export const GuestList = () => {
                                                         <span>{user?.name}</span></div>
                                                     }
                                                 </TableCell>
-                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.room}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.rnumber}</TableCell>
                                                 <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.id}</TableCell>
                                                 <TableCell className='tablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.email}</TableCell>
                                                 {window.innerWidth >= 1050 && <>
-                                                    <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{user.phone}</TableCell>
                                                     <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">
-                                                        {/* {user.accompaniers.map((accompanier, accompanierIndex) => (
-                                                        ))} */}
-                                                        <TableRow >
-                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
-                                                        </TableRow>
-                                                        <TableRow >
-                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
-                                                        </TableRow>
-                                                        <TableRow >
-                                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }}> john maveli </TableCell>
-                                                        </TableRow>
+                                                        {user.occupants && user.occupants.length > 0 ? (
+                                                            user.occupants.map((name, index) => (
+                                                                <div key={index}>{name}</div>
+                                                            ))
+                                                        ) : (
+                                                            <div>No Accompanying Guests</div>
+                                                        )}
                                                     </TableCell>
                                                 </>}
-                                                <TableCell className='minitablet' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center"></TableCell>
                                                 <TableCell align="center">
                                                     <Button
                                                         className='rmbtn'

@@ -11,6 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { InvoiceDialog } from "../Report/Invoice";
 import axios from "axios";
+import { useAuth } from "../../contexts/auth";
 
 
 export const MyBookings = () => {
@@ -18,6 +19,7 @@ export const MyBookings = () => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
+    const { auth } = useAuth();
 
     const [selectedCategory, setSelectedCategory] = useState("booked");
 
@@ -58,15 +60,19 @@ export const MyBookings = () => {
     useEffect(() => {
         const fetchServices = async (serviceType, setter) => {
             try {
-                const response = await axios.get(`/api/v1/service/getMyService/${serviceType}`);
+                const guestId = auth?.user?.id;
+
+                const response = await axios.get(`/api/v1/room/getMyService/${serviceType}`, {
+                    params: { guestId },
+                });
                 if (response.data.success) {
                     setter(response.data.services);
                 }
-
             } catch (err) {
                 console.error(err.message);
             }
         };
+
 
         fetchServices('booked', setBookedServices);
         fetchServices('completed', setCompletedServices);
@@ -116,11 +122,11 @@ export const MyBookings = () => {
     const list = getServiceListForCategory();
 
     const [cancelConfirmationOpen, setCancelConfirmationOpen] = useState(false);
-    const [selectedServiceId, setSelectedServiceId] = useState(null);
+    const [selectedReserveId, setselectedReserveId] = useState(null);
 
     // Function to open the cancel confirmation dialog
     const handleCancelConfirmationOpen = (serviceId) => {
-        setSelectedServiceId(serviceId);
+        setselectedReserveId(serviceId);
         setCancelConfirmationOpen(true);
     };
 
@@ -131,15 +137,15 @@ export const MyBookings = () => {
 
     const cancelBooking = async () => {
         try {
-            const response = await axios.put(`/api/v1/service/cancelBooking`, { serviceId: selectedServiceId });
+            const response = await axios.put(`/api/v1/room/cancelBooking`, { reserveId: selectedReserveId });
 
             if (response && response.data && response.data.success) {
                 // Update the UI or perform additional actions after successful cancellation
-                const updatedCancelledService = bookedServices.find(service => service.serviceid === selectedServiceId);
+                const updatedCancelledService = bookedServices.find(service => service.reserveid === selectedReserveId);
                 setCancelledServices(prevCancelledServices => [...prevCancelledServices, updatedCancelledService]);
 
                 // Remove the cancelled service from the booked list
-                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.serviceid !== selectedServiceId));
+                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.reserveid !== selectedReserveId));
             }
             // Close the cancel confirmation dialog after handling cancellation
             handleCancelConfirmationClose();
@@ -149,14 +155,15 @@ export const MyBookings = () => {
         }
     };
 
-    const handleCheckIn = async (serviceId) => {
+    const handleCheckIn = async (reserveId) => {
         try {
-            const response = await axios.put(`/api/v1/service/checkin`, { serviceId });
+            const response = await axios.put(`/api/v1/room/checkin`, { reserveId });
 
             if (response && response.data && response.data.success) {
 
                 // Remove the cancelled service from the booked list
-                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.serviceid !== serviceId));
+                // console.log(response)
+                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.reserveId !== reserveId));
 
                 navigate("/about")
             }
@@ -166,16 +173,16 @@ export const MyBookings = () => {
         }
     };
 
-    const handleCheckOut = async (serviceId) => {
+    const handleCheckOut = async (reserveId) => {
         try {
-            const response = await axios.put(`/api/v1/service/checkout`, { serviceId });
+            const response = await axios.put(`/api/v1/room/checkout`, { reserveId });
 
             if (response && response.data && response.data.success) {
-                const updatedCompletedService = bookedServices.find(service => service.serviceid === selectedServiceId);
+                const updatedCompletedService = bookedServices.find(service => service.reserveid === selectedReserveId);
                 setCompletedServices(prevCompletedServices => [...prevCompletedServices, updatedCompletedService]);
 
                 // Remove the cancelled service from the booked list
-                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.serviceid !== serviceId));
+                setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.reserveid !== reserveId));
             }
         } catch (error) {
             console.error("Error check-in room:", error);
@@ -233,7 +240,7 @@ export const MyBookings = () => {
                                         {list.map((item, index) => (
                                             <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                 <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
-                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="left">{item.roomid}</TableCell>
+                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="left">{item.rnumber}</TableCell>
                                                 <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{formatDate(item.startdate)} - {formatDate(item.enddate)}
                                                 </TableCell>
                                                 <TableCell align="center">
@@ -247,7 +254,7 @@ export const MyBookings = () => {
                                                                         component={Link}
                                                                         size="small"
                                                                         style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                                        onClick={() => handleCheckOut(item.serviceid)}
+                                                                        onClick={() => handleCheckOut(item.reserveid)}
                                                                     >Check-Out
                                                                     </Button>
                                                                 ) : (
@@ -258,11 +265,11 @@ export const MyBookings = () => {
                                                                             component={Link}
                                                                             size="small"
                                                                             style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                                            onClick={() => handleCheckIn(item.serviceid)}
+                                                                            onClick={() => handleCheckIn(item.reserveid)}
                                                                         >Check-In
                                                                         </Button>
                                                                         <Button
-                                                                            onClick={() => handleCancelConfirmationOpen(item.serviceid)} // Open the cancel confirmation dialog
+                                                                            onClick={() => handleCancelConfirmationOpen(item.reserveid)} // Open the cancel confirmation dialog
                                                                             className='rmbtn'
                                                                             variant="contained"
                                                                             component={Link}
@@ -289,7 +296,7 @@ export const MyBookings = () => {
                                                             className='rmbtn'
                                                             variant="contained"
                                                             size="small"
-                                                            onClick={() => handleOpenInvoice(item.serviceid)}
+                                                            onClick={() => handleOpenInvoice(item.reserveid)}
                                                             style={{ background: "#2a9942", margin: "1px", fontSize: "10px" }}
                                                         >
                                                             Invoice

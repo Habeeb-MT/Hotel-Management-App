@@ -7,12 +7,12 @@ dotenv.config();
 // create invoice
 export const createInvoiceController = async (req, res) => {
     try {
-        const { serviceId, paymentInfo, room, date } = req.body;
+        const { reserveId, paymentInfo, room, date } = req.body;
         const pMethod = paymentInfo.cardNumber ? "Debit/Credit-Card" : "UPI-Payment";
         console.log(paymentInfo, room, pMethod, date)
 
         const insertQuery = 'INSERT INTO invoice (invoiceid, date, guestId, amount, pMethod, cardNumber, upiID, bAdress) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING invoiceId';
-        const values = [serviceId, date, room.guestid, room.rate, pMethod, paymentInfo.cardNumber, paymentInfo.upiId, paymentInfo.billingAddress];
+        const values = [reserveId, date, room.guestid, room.rate, pMethod, paymentInfo.cardNumber, paymentInfo.upiId, paymentInfo.billingAddress];
         const result = await client.query(insertQuery, values);
         const newInvoiceId = result.rows[0].invoiceid;
 

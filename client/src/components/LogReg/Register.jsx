@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import "./LogReg.css"
+import React, { useState } from 'react';
+import "./LogReg.css";
 import { BiLogoFacebook, BiLogoTwitter, BiLogoInstagram, BiLogoLinkedin } from "react-icons/bi";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import Back from '../common/Back';
-import img from "../images/abt.jpg"
+import img from "../images/abt.jpg";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 
 export const Register = () => {
@@ -12,9 +14,16 @@ export const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [open, setOpen] = useState(false);
+    const [severity, setSeverity] = useState('success');
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
-    //form function
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // Form function
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -24,14 +33,19 @@ export const Register = () => {
                 password
             });
             if (res && res.data.success) {
-                // toast.success(res.data && res.data.message);
+                setSeverity('success');
+                setMessage(res.data.message);
+                setOpen(true);
                 navigate("/login");
             } else {
-                // toast.error(res.data.message);
+                setSeverity('error');
+                setMessage(res.data.message);
+                setOpen(true);
             }
         } catch (error) {
-            console.log(error);
-            //   toast.error("Something went wrong");
+            setSeverity('error');
+            setMessage("Something went wrong");
+            setOpen(true);
         }
     };
 
@@ -39,7 +53,11 @@ export const Register = () => {
     return (
         <>
             <Back name='Sign Up' title='Sign Up - Explore More On Us!' cover={img} />
-
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <MuiAlert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
             <div class="containerlog" >
                 <div class="contentlog">
                     <div class="textcontent">

@@ -32,7 +32,6 @@ const RecentCard = ({ searchValues }) => {
     navigate(`/select-room`, {
       state: {
         rnumber: roomData.rnumber,
-        guestid: roomData.guestid,
         rate: roomData.rate,
         rtype: roomData.rtype,
         occupancy: roomData.occupancy,

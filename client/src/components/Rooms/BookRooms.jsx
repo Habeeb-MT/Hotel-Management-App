@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import dayjs from "dayjs";
+import { useAuth } from '../../contexts/auth';
 
 function getStyles(name, personName, theme) {
     return {
@@ -75,6 +76,9 @@ export const BookRooms = () => {
 
     const location = useLocation();
     const room = location.state || null;
+    const { auth } = useAuth();
+
+    const guestId = auth?.user?.id;
 
     const [paymentInfo, setPaymentInfo] = useState({
         name: '',
@@ -156,18 +160,23 @@ export const BookRooms = () => {
             if (room.roomOpt === "room+B+L/D") charge = parseInt(room.rate) + 2000;
             const date = dayjs(Date.now()).format('YYYY-MM-DD');
 
-            let response = await axios.post(`/api/v1/service/makeservice`, {
-                charge: charge, serviceType: "Booking", guestId: room.guestid,
-                roomid: room.rnumber, startDate: room.startDate, endDate: room.endDate
+            let response = await axios.post(`/api/v1/room/reserve`, {
+                charge: charge, guestId: guestId,
+                rnumber: room.rnumber, startDate: room.startDate, endDate: room.endDate
             });
 
-            const serviceId = response.data.serviceId
+            const reserveId = response.data.reserveid
             let response1 = await axios.post(`/api/v1/invoice/makeinvoice`, {
-                serviceId, paymentInfo, room, date
+                reserveId, paymentInfo, room, date
             });
 
-            if (response && response1 && response.data.success && response1.data.success) {
-                console.log("Booking made successfully, Invoice made successfuly", response.data, response1.data);
+            const guestList = room.guests;
+            let response2 = await axios.post(`/api/v1/room/addguest`, {
+                reserveId, guestId, guestList
+            });
+
+            if (response && response1 && response.data.success && response1.data.success && response2 && response2.data.success) {
+                console.log("Booking made successfully, Invoice made successfuly, Guest Added Successfully", response.data, response1.data, response2.data);
             } else {
                 console.log("error");
             }
@@ -179,9 +188,6 @@ export const BookRooms = () => {
         } catch (error) {
             console.error("Error adding Request:", error);
         }
-
-
-
     }
 
     return (
