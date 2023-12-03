@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react'
-import "./LogReg.css"
+import React, { useState } from 'react';
+import './LogReg.css';
 import axios from 'axios';
-import { BiLogoFacebook, BiLogoTwitter, BiLogoInstagram, BiLogoLinkedin } from "react-icons/bi";
-import { useNavigate, useLocation } from "react-router-dom"
+import { BiLogoFacebook, BiLogoTwitter, BiLogoInstagram, BiLogoLinkedin } from 'react-icons/bi';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Back from '../common/Back';
-import img from "../images/abt.jpg"
+import img from '../images/abt.jpg';
+import { Snackbar, Alert } from '@mui/material'; // Import Snackbar and Alert from Material-UI
 import { useAuth } from '../../contexts/auth';
 
 export const Login = () => {
@@ -14,36 +15,52 @@ export const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { auth, setAuth } = useAuth();
-    //form function
+    const [openSnackbar, setOpenSnackbar] = useState(false); // State for Snackbar visibility
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // State for the snackbar message
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
+
+    // Form function
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("/api/v1/auth/login", {
+            const res = await axios.post('/api/v1/auth/login', {
                 email,
-                password
+                password,
             });
             if (res && res.data.success) {
-                // toast.success(res.data && res.data.message);
                 setAuth({
                     ...auth,
                     user: res.data.user,
                     token: res.data.token,
                 });
-                console.log(auth)
-                localStorage.setItem("auth", JSON.stringify(res.data));
+                localStorage.setItem('auth', JSON.stringify(res.data));
                 navigate(location.state || `/dashboard`);
             } else {
-                // toast.error(res.data.message);
+                setSnackbarMessage(res.data.message);
+                setOpenSnackbar(true);
             }
         } catch (error) {
-            console.log(error);
-            //   toast.error("Something went wrong");
+            setSnackbarMessage('Something went wrong');
+            setOpenSnackbar(true);
         }
     };
     return (
 
         <>
             <Back name='Sign In' title='Sign In - Explore More On Us!' cover={img} />
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                sx={{ width: '100%' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ backgroundColor: '#ff6961', color: "red" }}> {/* Brighter red color */}
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
             <div class="containerlog" >
                 <div class="contentlog">
                     <div class="textcontent">
@@ -83,7 +100,14 @@ export const Login = () => {
                             <p>New user? <a class="register-link" onClick={() => navigate("/register")}>Sign up</a></p>
                         </div>
                     </form>
+                    {/* <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                        <Alert onClose={handleCloseSnackbar} severity="error">
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar> */}
+
                 </div>
-            </div></>
+            </div>
+        </>
     )
 }

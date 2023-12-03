@@ -7,7 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoute.js';
 import serviceRoutes from './routes/serviceRoute.js';
 import invoiceRoutes from "./routes/invoiceRoutes.js"
-
+import dashRoutes from "./routes/dashRoutes.js";
 //config env
 dotenv.config();
 
@@ -26,6 +26,7 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/service", serviceRoutes);
 app.use("/api/v1/invoice", invoiceRoutes);
 app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/dash", dashRoutes);
 //rest api
 app.get('/', (req, res) => {
     res.send(

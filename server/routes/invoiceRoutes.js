@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.post("/makeinvoice", createInvoiceController);
-router.get("/fetchinvoice/:invoiceID", fetchInvoiceController);
+router.get("/fetchinvoice/:reserveId", fetchInvoiceController);
 
 
 export default router;

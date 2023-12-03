@@ -15,8 +15,8 @@ export const Dashboard = () => {
 
     const { isManager, isAdmin } = useAuth();
     const [formattedDateTime, setFormattedDateTime] = useState('');
-
-
+    const [ucount, setuCount] = useState(0);
+    const [rcount, setrCount] = useState(0);
     const updateDateTime = (dateTime) => {
         const options = {
             year: 'numeric',
@@ -31,6 +31,31 @@ export const Dashboard = () => {
     };
 
     const serviceType = "Booking";
+    useEffect(() => {
+        const fetchUserCount = async () => {
+            try {
+                const response = await fetch('/api/v1/dash/usercount');
+                const data = await response.json();
+                setuCount(data.users);
+            } catch (error) {
+                console.error('Error fetching user count:', error);
+            }
+        };
+
+        const fetchRoomCount = async () => {
+            try {
+                const response = await fetch('/api/v1/dash/roomcount');
+                const data = await response.json();
+                setrCount(data.count);
+            } catch (error) {
+                console.error('Error fetching room count:', error);
+            }
+        };
+
+        fetchRoomCount();
+        fetchUserCount();
+    }, [setrCount, setuCount]);  // Corrected the dependency array
+
 
     return (
         <>

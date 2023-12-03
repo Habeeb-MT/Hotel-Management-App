@@ -10,6 +10,8 @@ export const Rooms = () => {
 
 
 
+  console.log(searchValues)
+
   return (
     <div>
       <section className="recent padding">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Heading from '../common/Heading'
 import TextField from '@mui/material/TextField';
 import "./BooksRooms.css"
@@ -78,7 +78,12 @@ export const BookRooms = () => {
     const room = location.state || null;
     const { auth } = useAuth();
 
-    const guestId = auth?.user?.id;
+    const [guestId, setGuestId] = useState(0);
+    useEffect(() => {
+        setGuestId(auth?.user?.id);
+
+    }, [auth])
+    console.log(guestId)
 
     const [paymentInfo, setPaymentInfo] = useState({
         name: '',

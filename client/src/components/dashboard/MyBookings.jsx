@@ -32,12 +32,13 @@ export const MyBookings = () => {
 
 
 
-    const handleOpenInvoice = async (serviceId) => {
-        const roomDetails = getRoomDetailsForService(serviceId);
+    const handleOpenInvoice = async (reserveId) => {
+        const roomDetails = getRoomDetailsForService(reserveId);
 
         if (roomDetails) {
+            console.log(reserveId)
             try {
-                const response = await axios.get(`/api/v1/invoice/fetchinvoice/${serviceId}`);
+                const response = await axios.get(`/api/v1/invoice/fetchinvoice/${reserveId}`);
                 if (response.data.success) {
                     setInvoiceData({ invoice: response.data.invoice, roomDetails: roomDetails });
                     setOpenInvoice(true);
@@ -111,7 +112,7 @@ export const MyBookings = () => {
 
         // Ensure serviceList is an array before using find
         if (Array.isArray(serviceList) && serviceList.length > 0) {
-            const service = serviceList.find(service => service.serviceid === serviceId);
+            const service = serviceList.find(service => service.reserveid === serviceId);
 
             return service;
         }

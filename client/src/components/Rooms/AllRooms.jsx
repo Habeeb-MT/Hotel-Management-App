@@ -13,27 +13,50 @@ import { useAuth } from "../../contexts/auth";
 import { AddRoomForm } from "./AddRoomForm";
 import axios from "axios";
 import ViewRoom from "./ViewRoom";
+import { Snackbar, Alert } from "@mui/material";
+import { TextField, InputAdornment, IconButton } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+
 
 export const AllRooms = () => {
-    const { isManager } = useAuth();
 
+    const { isManager } = useAuth();
     const [openViews, setOpenViews] = useState({});
+    const [open, setOpen] = useState(false);
+    const [rooms, setRooms] = useState([]);
+    const [roomToEdit, setRoomToEdit] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [searchText, setSearchText] = useState('');
+
+
     const handleCloseView = (rnumber) => {
         setOpenViews((prevOpenViews) => ({ ...prevOpenViews, [rnumber]: false }));
     };
 
-    const [open, setOpen] = useState(false);
-    const [rooms, setRooms] = useState([]);
-    const [roomToEdit, setRoomToEdit] = useState(null);
+    const handleSnackbar = (message, severity) => {
+        setSnackbarOpen(true);
+        setSnackbarSeverity(severity); // Add severity level
+        setSnackbarMessage(message);
+    };
 
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
+
+    // Usage example for successful room addition:
     const handleRoomAdded = (newRoom) => {
         setRooms((prevRooms) => [...prevRooms, newRoom]);
+        handleSnackbar('Room added/Updated successfully');
     };
 
     const handleEdit = (room) => {
         setRoomToEdit(room);
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
         setRoomToEdit(null);
@@ -42,7 +65,7 @@ export const AllRooms = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("/api/v1/room/fetchrooms");
+                const response = await axios.get('/api/v1/room/fetchrooms');
                 if (response) {
                     const jsonData = response.data.rooms;
                     setRooms(jsonData);
@@ -59,15 +82,25 @@ export const AllRooms = () => {
         try {
             const response = await axios.delete(`/api/v1/room/deleteroom/${rnum}`);
             if (response.data.success) {
-                // Remove the deleted room from the local state
-                setRooms((prevRooms) =>
-                    prevRooms.filter((room) => room.rnumber !== rnum)
-                );
+                setRooms((prevRooms) => prevRooms.filter((room) => room.rnumber !== rnum));
+                handleSnackbar('Room deleted successfully', 'success');
             }
         } catch (err) {
             console.error(err.message);
+            handleSnackbar('Error deleting room', 'error');
         }
     };
+
+    const handleSearch = (event) => {
+        setSearchText(event.target.value);
+    };
+
+    const filteredRooms = rooms.filter((room) =>
+        room.rtype.toLowerCase().includes(searchText.toLowerCase()) ||
+        room.rnumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        room.rate.toString().includes(searchText)
+    );
+
 
     return (
         <div>
@@ -119,7 +152,27 @@ export const AllRooms = () => {
                     ""
                 )}
             </div>
-            {rooms.length !== 0 ? (
+            <TextField
+                label="Search..."
+                variant="outlined"
+                value={searchText}
+                onChange={handleSearch}
+                style={{
+                    marginBottom: '20px',
+                    marginLeft: '20px',
+                    width: '300px',
+                }}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton>
+                                <SearchIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            {filteredRooms.length !== 0 ? (
                 <>
                     <div className="table" style={{ padding: "20px" }}>
                         <TableContainer
@@ -184,7 +237,7 @@ export const AllRooms = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rooms.map((room, index) => (
+                                    {filteredRooms.map((room, index) => (
                                         <TableRow
                                             key={room?.rnumber}
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -311,7 +364,18 @@ export const AllRooms = () => {
                 </>
             ) : (
                 ""
-            )}
+            )
+            }
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
         </div>
     );
 };
