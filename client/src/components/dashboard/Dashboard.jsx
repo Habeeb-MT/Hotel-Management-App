@@ -7,6 +7,7 @@ import { TimerComponent } from "./TmerComponent";
 import { TableMini1 } from "../TableMini/TableMini1";
 import { useAuth } from "../../contexts/auth";
 import About from "../about/About";
+import axios from "axios";
 
 
 export const Dashboard = () => {
@@ -15,6 +16,8 @@ export const Dashboard = () => {
     const [formattedDateTime, setFormattedDateTime] = useState('');
     const [ucount, setuCount] = useState(0);
     const [rcount, setrCount] = useState(0);
+    const [ocount, setoCount] = useState(0);
+    const [recount, setreCount] = useState(0);
     const updateDateTime = (dateTime) => {
         const options = {
             year: 'numeric',
@@ -29,32 +32,59 @@ export const Dashboard = () => {
     };
 
     const serviceType = "Booking";
-    useEffect(() => {
-        const fetchUserCount = async () => {
-            try {
-                const response = await fetch('/api/v1/dash/usercount');
-                const data = await response.json();
-                setuCount(data.users);
-            } catch (error) {
-                console.error('Error fetching user count:', error);
-            }
-        };
 
+
+    useEffect(() => {
         const fetchRoomCount = async () => {
             try {
-                const response = await fetch('/api/v1/dash/roomcount');
-                const data = await response.json();
-                setrCount(data.count);
+                const response = await axios.get('/api/v1/dash/roomcount');
+                setrCount(response.data.count);
             } catch (error) {
                 console.error('Error fetching room count:', error);
             }
         };
 
         fetchRoomCount();
-        fetchUserCount();
-    }, [setrCount, setuCount]);  // Corrected the dependency array
 
+    }, [rcount]);  // Corrected the dependency array
 
+    useEffect(() => {
+        const fetchOccupiedCount = async () => {
+            try {
+                const response = await axios.get('/api/v1/dash/occupiedcount');
+                setoCount(response.data.count);
+            } catch (error) {
+                console.error('Error fetching user count:', error);
+            }
+        };
+
+        fetchOccupiedCount();
+    }, [ocount]);
+    useEffect(() => {
+        const fetchuserCount = async () => {
+            try {
+                const response = await axios.get('/api/v1/dash/usercount');
+                setuCount(response.data.count);
+            } catch (error) {
+                console.error('Error fetching user count:', error);
+            }
+        };
+
+        fetchuserCount();
+    }, [ucount]);
+
+    useEffect(() => {
+        const fetchrequestCount = async () => {
+            try {
+                const response = await axios.get('/api/v1/dash/requestcount');
+                setreCount(response.data.count);
+            } catch (error) {
+                console.error('Error fetching total counts:', error);
+            }
+        };
+
+        fetchrequestCount();
+    }, [recount]);
     return (
         <>
             {console.log(isAdmin, isManager)}
@@ -70,28 +100,28 @@ export const Dashboard = () => {
                         <div className="middlesection">
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>35</h2>
+                                    <h2>{ucount}</h2>
                                     <div className="icon"><FaUsers /></div>
                                 </div>
                                 <p>Total Users</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>17</h2>
+                                    <h2>{rcount}</h2>
                                     <div className="icon"><FaHotel /></div>
                                 </div>
                                 <p>Total Rooms</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>12</h2>
+                                    <h2>{ocount}</h2>
                                     <div className="icon"><FaHotel /></div>
                                 </div>
                                 <p>Total Occupied Room</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>4</h2>
+                                    <h2>{recount}</h2>
                                     <div className="icon"><FaHotel /></div>
                                 </div>
                                 <p>Total Requests</p>
