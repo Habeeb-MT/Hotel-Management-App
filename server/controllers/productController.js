@@ -42,7 +42,7 @@ export const productFiltersController = async (req, res) => {
     const result = await client.query(
       `
         SELECT *
-        FROM rooms
+        FROM rooms,reserve
         ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
       `,
       values

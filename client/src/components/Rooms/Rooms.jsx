@@ -8,15 +8,13 @@ export const Rooms = () => {
   const [searchValues, setSearchValues] = useState({});
   const [res, setRes] = useState([]);
 
-  const handleSearchValues = (values) => {
-    setSearchValues(values);
-  };
+
 
   return (
     <div>
       <section className="recent padding">
         <div className="container">
-          <Search onSearch={handleSearchValues} setRes={setRes} />
+          <Search setRes={setRes} setSearchValues={setSearchValues} />
 
           <RecentCard searchValues={searchValues} res={res} />
         </div>
