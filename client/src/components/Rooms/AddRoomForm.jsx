@@ -99,7 +99,7 @@ export const AddRoomForm = ({ open, handleClose, onRoomAdded, roomToEdit }) => {
                     id="responsive-dialog-title"
                     style={{ color: "green", margin: "0px auto" }}
                 >
-                    {"Add Room"}
+                    {roomToEdit ? "Update Room" : "Add Room"}
                 </DialogTitle>
                 <DialogContent style={{ minHeight: "300px" }}>
                     <form className="form roomForm">

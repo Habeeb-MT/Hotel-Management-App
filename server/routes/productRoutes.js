@@ -5,7 +5,16 @@ import {
   createProductController,
   fetchProductController,
   deleteProductController,
-  editProductController
+  editProductController,
+  addGuestController,
+  makeServiceController,
+  fetchReserveController,
+  acceptReserveController,
+  checkInServiceController,
+  checkOutServiceController,
+  fetchMyBookingController,
+  fetchMyCheckedInServiceController,
+  cancelMyBookingController
 } from "../controllers/productController.js";
 const router = express.Router();
 
@@ -26,5 +35,25 @@ router.delete("/deleteroom/:rnumber", deleteProductController);
 
 // update room
 router.put("/editroom/:rnumber", editProductController);
+
+// add guest
+router.post("/addguest", addGuestController);
+
+router.post("/reserve", makeServiceController);
+
+router.get("/fetchreserve/", fetchReserveController);
+
+router.put("/acceptBooking", acceptReserveController);
+
+
+router.put("/cancelBooking", cancelMyBookingController);
+
+router.put("/checkin", checkInServiceController);
+
+router.put("/checkout", checkOutServiceController);
+
+router.get("/getMyService/:serviceType", fetchMyBookingController);
+
+router.get("/fetchcheckedinrooms", fetchMyCheckedInServiceController);
 
 export default router;

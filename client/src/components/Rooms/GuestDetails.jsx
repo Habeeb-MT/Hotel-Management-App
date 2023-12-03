@@ -4,12 +4,16 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Heading from '../common/Heading'
 import "./BooksRooms.css"
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/auth';
 
 export const GuestDetails = ({ onAddGuest }) => {
 
+    const { auth } = useAuth();
+
     const location = useLocation();
     const room = location.state || {};
+    console.log(room)
 
     const [guests, setGuests] = useState([]);
 
@@ -40,6 +44,7 @@ export const GuestDetails = ({ onAddGuest }) => {
 
     const navigate = useNavigate();
     const gotoPayment = () => {
+
         navigate('/book/rooms', {
             state: { ...room, guests }
         })
@@ -60,12 +65,7 @@ export const GuestDetails = ({ onAddGuest }) => {
                                         value={guest.name}
                                         onChange={(e) => handleGuestChange(index, 'name', e.target.value)}
                                     />
-                                    <TextField
-                                        label={`Guest ${index + 1} Email`}
-                                        variant="outlined"
-                                        value={guest.email}
-                                        onChange={(e) => handleGuestChange(index, 'email', e.target.value)}
-                                    />
+
                                     <DeleteIcon onClick={() => handleRemoveGuest(index)} />
                                 </div>
 

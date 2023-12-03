@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import img from "../images/services.jpg";
 import Back from "../common/Back";
 import "../home/featured/Featured.css";
@@ -23,14 +23,22 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Heading from "../common/Heading";
 import "./Services.css";
 import { useAuth } from "../../contexts/auth";
-import RecentCard from "../home/recent/RecentCard";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Services = () => {
+
+  const { isAdmin, auth, isManager } = useAuth();
+  const guestId = auth?.user?.id;
+
   const [requestType, setRequestType] = useState("");
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [selectedAmenity, setSelectedAmenity] = useState("");
   const [media, setMedia] = useState(null);
-  const [status, setStatus] = useState("Request received");
+  // const [status, setStatus] = useState("Request received");
+  const [selectedRoom, setSelectedRoom] = useState("");
+  const [rooms, setRooms] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   const amenityPrices = {
     "Extra Towels": 5.0, // Replace with actual prices
@@ -40,30 +48,65 @@ const Services = () => {
     Other: 0.0,
   };
 
-  const serviceHistory = [
-    {
-      service: 'Maintenance',
-      status: 'Completed',
-    },
-    {
-      service: 'Room Service',
-      status: 'In progress',
-    },
-    {
-      service: 'Extra Amenities',
-      status: 'Completed',
-    },
-  ];
 
-  const handleRequestSubmission = () => {
-    // Handle the request submission here, including calculating the total price.
+  const handleRequestSubmission = async () => {
 
-    const totalPrice = amenityPrices[selectedAmenity];
-    // You can update the status with the total price.
-    setStatus(`In progress. Total Price: $${totalPrice}`);
+    // const totalPrice = amenityPrices[selectedAmenity];
+    // // You can update the status with the total price.
+    // setStatus(`In progress. Total Price: $${totalPrice}`);
+
+    try {
+      let response = await axios.post(`/api/v1/service/makeroomservice`, {
+        serviceType: requestType,
+        guestId: guestId,
+        rnumber: selectedRoom,
+        spInstruct: specialInstructions
+      });
+
+      if (response && response.data.success) {
+        console.log("Room service made successfully", response.data);
+      } else {
+        console.log("error");
+      }
+
+    } catch (error) {
+      console.error("Error making room service Request:", error);
+    }
   };
 
-  const { isAdmin, auth, isManager } = useAuth();
+
+  useEffect(() => {
+    const fetchServices = async (setter1, setter2) => {
+      try {
+        const guestId = auth?.user?.id;
+
+        const response = await axios.get(`/api/v1/room/fetchcheckedinrooms`, {
+          params: { guestId },
+        });
+        if (response.data.success) {
+          const roomNumbers = response.data.services.map(service => service.rnumber);
+          setter1(roomNumbers);
+        }
+
+        const response1 = await axios.get(`/api/v1/service/fetchrequestedroomservice`, {
+          params: { guestId },
+        });
+        if (response1.data.success) {
+          const req = response1.data.services;
+          setter2(req);
+        }
+
+
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+
+    fetchServices(setRooms, setRequests);
+  }, [auth]);
+
+
+
 
   return (
     <>
@@ -74,6 +117,20 @@ const Services = () => {
             <div className="container reqservices">
               <Container maxWidth="sm">
                 <Heading title="Request Services" />
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel>Select Room</InputLabel>
+                  <Select
+                    value={selectedRoom}
+                    onChange={(e) => setSelectedRoom(e.target.value)}
+                    label="Select Room"
+                  >
+                    {rooms.map((room, index) => (
+                      <MenuItem key={index} value={room}>
+                        Room No : {room}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <FormControl fullWidth variant="outlined" margin="normal">
                   <InputLabel>Request Type</InputLabel>
                   <Select
@@ -150,16 +207,28 @@ const Services = () => {
                     <TableHead>
                       <TableRow>
                         <TableCell>SI</TableCell>
+                        <TableCell>Room Id</TableCell>
                         <TableCell>Service</TableCell>
                         <TableCell>Status</TableCell>
+                        <TableCell>Action</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {serviceHistory.map((entry, index) => (
+                      {requests.map((entry, index) => (
                         <TableRow key={index}>
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>{entry.service}</TableCell>
+                          <TableCell>{entry.rnumber}</TableCell>
+                          <TableCell>{entry.servicetype}</TableCell>
                           <TableCell>{entry.status}</TableCell>
+                          <TableCell>
+                            {entry.status === 'Done' && <Button
+                              className='rmbtn'
+                              variant="contained"
+                              component={Link}
+                              size="small"
+                              style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
+                            >Review</Button>}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

@@ -108,8 +108,8 @@ export const createProductController = async (req, res) => {
   try {
     const { type, cap, num, price, descript, pic } = req.body;
 
-    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING rnumber';
-    const values = [num, type, price, cap, descript, pic, "Available"];
+    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, hotelid) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING rnumber';
+    const values = [num, type, price, cap, descript, pic, "HillView"];
 
     const insert = await client.query(ins, values);
 
@@ -135,17 +135,6 @@ export const fetchProductController = async (req, res) => {
   try {
     const get = await client.query('SELECT * FROM rooms');
     const rooms = get.rows;
-    // const rooms = get.rows.map(room => {
-    //   // Assuming that the image is stored in a column named 'pic' of type bytea
-    //   // Convert the bytea data to a base64-encoded string
-    //   const base64Image = room.pic.toString('base64');
-
-    //   return {
-    //     ...room,
-    //     pic: base64Image,
-    //   };
-    // });
-
     // Send the rooms as JSON response
     res.json({
       success: true,
@@ -232,3 +221,277 @@ export const editProductController = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+// create service
+export const makeServiceController = async (req, res) => {
+  try {
+    const { charge, guestId, rnumber, startDate, endDate } = req.body;
+    const status = "Pending";
+
+    const insertQuery = 'INSERT INTO reserve (charge, guestId, status, rnumber, startDate, endDate) VALUES ($1, $2, $3, $4, $5, $6) RETURNING reserveId';
+    const values = [charge, guestId, status, rnumber, startDate, endDate];
+    const ins = await client.query(insertQuery, values);
+    const newServiceId = ins.rows[0].reserveid;
+
+    return res.status(201).send({
+      success: true,
+      message: 'reservation requested successfully',
+      reserveid: newServiceId,
+    });
+  } catch (error) {
+    console.error("Error creating reservation:", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while creating reservation',
+      error: error.message,
+    });
+  }
+};
+
+
+
+
+
+
+
+
+// add guest
+export const addGuestController = async (req, res) => {
+  try {
+    const { guestId, reserveId, guestList } = req.body;
+
+    const insertPromises = guestList.map(async (guest) => {
+      const ins = 'INSERT INTO occupants (serviceId, guestId, oName) VALUES ($1, $2, $3)';
+      const values = [reserveId, guestId, guest.name];
+
+      return await client.query(ins, values);
+    });
+
+    await Promise.all(insertPromises);
+
+    return res.status(201).send({
+      success: true,
+      message: 'Guests added successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error occurred in guest adding',
+      error,
+    });
+  }
+};
+
+
+
+
+// fetch Admin service
+export const fetchReserveController = async (req, res) => {
+  try {
+    const status = "Pending"
+    const get = await client.query('SELECT * FROM reserve WHERE status = $1', [status]);
+    const services = get.rows;
+
+    res.json({
+      success: true,
+      message: 'Services fetched successfully',
+      services,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    // Send an error response if there's an issue
+    res.status(500).json({
+      success: false,
+      message: 'Error occurred in service fetching',
+      error: error.message,
+    });
+  }
+};
+
+
+// accept booking service
+export const acceptReserveController = async (req, res) => {
+  try {
+    const { reserveId } = req.body;
+    const stat = "Booked"
+    const updateQuery = 'UPDATE reserve SET status = $1 WHERE reserveid = $2 RETURNING reserveid';
+    const values = [stat, reserveId];
+    const { rows } = await client.query(updateQuery, values);
+    const newServiceId = rows[0].id;
+
+    return res.status(201).send({
+      success: true,
+      message: 'Booking confirmed successfully',
+      serviceId: newServiceId,
+    });
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while confirming booking',
+      error: error.message,
+    });
+  }
+};
+
+
+
+
+// fetch My service
+export const fetchMyBookingController = async (req, res) => {
+
+  // Function to convert serviceType to status
+  const getServiceStatus = (serviceType) => {
+    switch (serviceType) {
+      case 'booked':
+        return 'Booked';
+      case 'completed':
+        return 'Completed';
+      case 'cancelled':
+        return 'Cancelled';
+      default:
+        return ''; // Handle invalid types here
+    }
+  };
+
+  try {
+    const { serviceType } = req.params;
+    const status = getServiceStatus(serviceType);
+    const guestId = req.query.guestId; // Retrieve guestId from query parameters
+
+    let get;
+    if (status === "Booked")
+      get = await client.query('SELECT * FROM reserve WHERE guestid = $1 AND (status = $2 OR status = $3)', [guestId, status, 'CheckedIn']);
+    else
+      get = await client.query('SELECT * FROM reserve WHERE guestid = $1 AND status = $2', [guestId, status]);
+    const services = get.rows;
+
+    res.json({
+      success: true,
+      message: 'Booked Rooms fetched successfully',
+      services,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error occurred in my rooms fetching',
+      error: error.message,
+    });
+  }
+};
+
+// cancel booking
+export const cancelMyBookingController = async (req, res) => {
+  try {
+    const { reserveId } = req.body;
+    const status = "Cancelled";
+
+    const updateQuery = 'UPDATE reserve SET status = $1 WHERE reserveid = $2 RETURNING reserveid';
+    const values = [status, reserveId];
+    const { rows } = await client.query(updateQuery, values);
+    const updatedServiceId = rows[0].reserveId;
+
+    return res.status(200).send({
+      success: true,
+      message: 'Booking cancelled successfully',
+      reserveId: updatedServiceId,
+    });
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while cancelling booking',
+      error: error.message,
+    });
+  }
+};
+
+// check-in room 
+export const checkInServiceController = async (req, res) => {
+  try {
+    const { reserveId } = req.body;
+    const status = "CheckedIn";
+
+    const updateQuery = 'UPDATE reserve SET status = $1 WHERE reserveid = $2 RETURNING reserveId';
+    const values = [status, reserveId];
+    const { rows } = await client.query(updateQuery, values);
+    const updatedreserveId = rows[0].reserveId;
+
+    return res.status(200).send({
+      success: true,
+      message: 'Room checked-in successfully',
+      reserveId: updatedreserveId,
+    });
+  } catch (error) {
+    console.error("Error check-in room: ", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while check-in',
+      error: error.message,
+    });
+  }
+};
+
+// check-out room 
+export const checkOutServiceController = async (req, res) => {
+  try {
+    const { reserveId } = req.body;
+    const status = "Completed";
+
+    const updateQuery = 'UPDATE reserve SET status = $1 WHERE reserveid = $2 RETURNING reserveid';
+    const values = [status, reserveId];
+    const { rows } = await client.query(updateQuery, values);
+    const updatedreserveId = rows[0].reserveid;
+
+    return res.status(200).send({
+      success: true,
+      message: 'Room checked-out successfully',
+      reserveId: updatedreserveId,
+    });
+  } catch (error) {
+    console.error("Error check-out room: ", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while check-out',
+      error: error.message,
+    });
+  }
+};
+
+
+// fetch CheckedIn Rooms
+export const fetchMyCheckedInServiceController = async (req, res) => {
+
+  try {
+    const guestId = req.query.guestId;
+    let get = await client.query('SELECT rnumber FROM reserve WHERE guestid = $1 AND status = $2', [guestId, 'CheckedIn']);
+    const services = get.rows;
+
+    res.json({
+      success: true,
+      message: 'Checkedin rooms fetched successfully',
+      services,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error occurred in service Checkedin rooms',
+      error: error.message,
+    });
+  }
+};
+

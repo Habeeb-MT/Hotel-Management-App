@@ -14,6 +14,7 @@ export const SelectRoom = () => {
 
     const location = useLocation();
     const room = location.state || {}; // Destructure the state or set default to empty object
+    console.log(room)
 
     const [roomOpt, setRoomOpt] = useState('roomOnly'); // Initial room option
     const navigate = useNavigate();
@@ -83,7 +84,7 @@ export const SelectRoom = () => {
                                                     Room + Breakfast
                                                     <ul>
                                                         <li>Non-Refundable</li>
-                                                        <li>No meals included</li>
+                                                        <li>Breakfast included</li>
                                                         <li>Free Welcome Drink on Arrival</li>
                                                     </ul></>
                                             }</TableCell>
@@ -109,7 +110,7 @@ export const SelectRoom = () => {
                                                     Room + Breakfast + lunch/dinner
                                                     <ul>
                                                         <li>Non-Refundable</li>
-                                                        <li>No meals included</li>
+                                                        <li>All meals included</li>
                                                         <li>Free Welcome Drink on Arrival</li>
                                                     </ul></>
                                             }</TableCell>

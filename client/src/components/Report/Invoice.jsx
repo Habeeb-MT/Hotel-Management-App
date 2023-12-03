@@ -13,16 +13,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 50,
-        fontSize: 25,
+        fontSize: 20,
         borderBottom: '2px solid #333',
         paddingBottom: 10,
     },
     section: {
         marginBottom: 10,
-        fontSize: 14,
+        fontSize: 12,
     },
     title: {
-        fontSize: 32,
+        fontSize: 22,
         marginBottom: 30,
         textAlign: 'center',
         textDecoration: 'underline',
@@ -36,13 +36,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#eeeeee',
         flexDirection: 'row',
         padding: 10,
-        fontSize: 16,
+        fontSize: 12,
         marginTop: 20,
     },
     tableRow: {
         flexDirection: 'row',
         padding: 10,
-        fontSize: 14,
+        fontSize: 12,
     },
     tableCell: {
         flex: 1,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         borderTop: '2px solid #333',
         paddingTop: 10,
         marginTop: 20,
-        fontSize: 16,
+        fontSize: 14,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -75,7 +75,7 @@ export const Invoice = ({ invoiceData }) => {
     return (
         <PDFViewer width="100%" height={800}>
             <Document>
-                <Page size={{ width: 500, height: 650 }} style={styles.page}>
+                <Page size={{ width: 500, height: 700 }} style={styles.page}>
                     <View style={styles.header}>
                         <Text>HillView Resort</Text>
                         <View style={styles.hotelInfo}>
@@ -96,8 +96,8 @@ export const Invoice = ({ invoiceData }) => {
                     {invoiceData.roomDetails ? (
                         <>
                             <View style={styles.tableHeader}>
-                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Type</Text>
-                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Number</Text>
+                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Type : {invoiceData.roomDetails.roomid}</Text>
+                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Number : {invoiceData.roomDetails.roomid}</Text>
                             </View>
                         </>
                     ) : (

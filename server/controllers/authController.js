@@ -83,7 +83,7 @@ export const loginController = async (req, res) => {
       });
     }
     const token = await JWT.sign({ id: userData.id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
     res.status(200).send({
       success: true,
@@ -92,6 +92,7 @@ export const loginController = async (req, res) => {
         name: userData.name,
         email: userData.email,
         role: userData.role,
+        id: userData.id,
       },
       token,
     });
@@ -114,3 +115,4 @@ export const testController = (req, res) => {
     res.send({ error });
   }
 };
+

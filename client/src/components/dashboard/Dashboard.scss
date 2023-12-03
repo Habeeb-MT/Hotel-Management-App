@@ -50,12 +50,12 @@
     }
 
     .middlesection {
-        margin: 10px 20px;
+        margin: 20px 100px;
         margin-top: 30px;
         display: grid;
         grid-template-rows: 1fr;
         /* Sets one column */
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         /* Sets three rows */
         gap: 10px;
         /* Optional: adds some spacing between the divs */

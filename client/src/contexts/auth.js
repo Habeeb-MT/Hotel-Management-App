@@ -16,6 +16,13 @@ const AuthProvider = ({ children }) => {
 
   axios.defaults.headers.common["Authorization"] = auth?.token;
 
+  const setRoles = (userData) => {
+    const { role } = userData;
+    setIsManager(role === 'manager');
+    setIsAdmin(role === 'admin');
+    setIsGuest(role === 'guest');
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const data = localStorage.getItem("auth");
@@ -27,9 +34,7 @@ const AuthProvider = ({ children }) => {
         });
 
         if (parseData.userData) {
-          setIsManager(parseData.userData.role === 'manager');
-          setIsAdmin(parseData.userData.role === 'admin');
-          setIsGuest(parseData.userData.role === 'guest');
+          setRoles(parseData.userData); // Set roles based on user data
           setIsLoggedIn(true);
         }
       }
@@ -38,6 +43,7 @@ const AuthProvider = ({ children }) => {
     fetchData();
     //eslint-disable-next-line
   }, []);
+
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, isAdmin, isManager, isLoggedIn, isGuest }}>

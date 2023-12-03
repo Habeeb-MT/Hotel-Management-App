@@ -54,7 +54,7 @@ const Pages = () => {
           <Route exact path="/contact" element={<Contact />} />
           <Route
             exact
-            path="/:id/dashboard"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
