@@ -112,7 +112,7 @@ CREATE TABLE invoice (
   pMethod VARCHAR(20),
   cardNumber VARCHAR(10),
   upiID VARCHAR(10),
-  bAdress VARCHAR(30)
+  bAdress VARCHAR(30),
   FOREIGN KEY (guestID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
