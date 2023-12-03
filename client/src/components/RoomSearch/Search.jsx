@@ -139,7 +139,7 @@ export const SingleSelect = ({ options, selectedValue, onChange }) => {
   );
 };
 
-export const Search = ({ onSearch, setRes }) => {
+export const Search = ({ setRes, setSearchValues }) => {
   const [selectedOccupancy, setSelectedOccupancy] = React.useState([]);
   const [selectedSuiteType, setSelectedSuiteType] = React.useState([]);
   const [selectedRate, setSelectedRate] = React.useState([]);
@@ -187,9 +187,13 @@ export const Search = ({ onSearch, setRes }) => {
     }
   };
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => { }, []);
 
   const filterProduct = async (e) => {
+    setSearchValues({
+      startDate: startDate,
+      endDate: endDate,
+    })
     try {
       e.preventDefault();
       const { data } = await axios.get("/api/v1/product/product-filters", {

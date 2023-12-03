@@ -7,6 +7,94 @@ dotenv.config();
 
 //filters
 
+// export const productFiltersController = async (req, res) => {
+//   try {
+//     const { selectedOccupancy, selectedSuiteType, selectedRate, startDate, endDate } = req.query;
+
+//     let values = [];
+//     let conditions = [];
+//     let index = 1;
+//     let values1 = [];
+//     let conditions1 = [];
+//     let index1 = 1;
+
+//     if (selectedOccupancy && selectedOccupancy.length > 0) {
+//       conditions.push(`occupancy = $${index}`);
+//       values.push(selectedOccupancy[0]);
+//       index++;
+//     }
+
+//     if (selectedSuiteType && selectedSuiteType.length > 0) {
+//       conditions.push(`rtype = $${index}`);
+//       values.push(selectedSuiteType[0]);
+//       index++;
+//     }
+
+//     if (selectedRate && selectedRate.length === 2) {
+//       conditions.push(`rate BETWEEN $${index} AND $${index + 1}`);
+//       values.push(selectedRate[0], selectedRate[1]);
+//       index += 2;
+//     }
+
+//     if (startDate && endDate) {
+//       // conditions1.push(`(startdate NOT BETWEEN $${index1} AND $${index1 + 1} AND enddate NOT BETWEEN $${index1} AND $${index1 + 1})`);
+//       conditions1.push(`(TO_DATE(reserve.startdate::TEXT, 'YYYY-MM-DD') NOT BETWEEN $${index} AND $${index + 1} AND TO_DATE(reserve.enddate::TEXT, 'YYYY-MM-DD') NOT BETWEEN $${index} AND $${index + 1})`);
+//       values1.push(startDate, endDate);
+//       index1 += 2;
+//     }
+
+//     console.log(conditions.join(' AND '))
+//     console.log(conditions1.join(' AND '))
+
+//     const result = await client.query(
+//       `
+//         SELECT *
+//         FROM rooms
+//         ${conditions.length > 0 ? ' WHERE ' : ''}
+//         ${conditions.join(' AND ')}
+//         AND NOT EXISTS (
+//           SELECT *
+//           FROM reserve
+//           ${conditions1.length > 0 ? ' WHERE rooms.rnumber = reserve.rnumber AND ' : ''}
+//           ${conditions1.join(' AND ')}
+//         )
+//       `,
+//       [...values, ...values1]
+//     );
+
+//     // console.log('Generated SQL Query:', `
+//     //   SELECT *
+//     //   FROM rooms
+//     //   ${conditions.length > 0 ? ' WHERE ' : ''}
+//     //   ${conditions.join(' AND ')}
+//     //   AND NOT EXISTS (
+//     //     SELECT *
+//     //     FROM reserve
+//     //     ${conditions1.length > 0 ? ' WHERE rooms.rnumber = reserve.rnumber AND ' : ''}
+//     //     ${conditions1.join(' AND ')}
+//     //   )
+//     // `);
+
+//     // console.log('Query Values:', [...values, ...values1]);
+
+
+//     const rooms = result.rows;
+
+//     res.status(200).send({
+//       success: true,
+//       message: "Filter works successfully.",
+//       rooms,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({
+//       success: false,
+//       message: "Error while searching rooms",
+//       error: error.message || error,
+//     });
+//   }
+// };
+
 export const productFiltersController = async (req, res) => {
   try {
     const { selectedOccupancy, selectedSuiteType, selectedRate, startDate, endDate } = req.query;
@@ -38,14 +126,18 @@ export const productFiltersController = async (req, res) => {
       values.push(startDate, endDate);
       index += 2;
     }
-
     const result = await client.query(
       `
         SELECT *
         FROM rooms
+        LEFT JOIN reserve ON rooms.rnumber = reserve.rnumber
         ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
+        AND (
+          reserve.rnumber IS NULL OR
+          (reserve.rnumber IS NOT NULL AND (reserve.enddate < $${index} OR reserve.startdate > $${index + 1}))
+        )
       `,
-      values
+      [...values, startDate, endDate]
     );
 
     console.log('Generated SQL Query:', `
@@ -72,8 +164,6 @@ export const productFiltersController = async (req, res) => {
     });
   }
 };
-
-
 
 
 
@@ -110,8 +200,8 @@ export const createProductController = async (req, res) => {
   try {
     const { type, cap, num, price, descript, pic } = req.body;
 
-    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, hotelid) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *';
-    const values = [num, type, price, cap, descript, pic, "HillView"];
+    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic) VALUES ($1, $2, $3, $4, $5, $6) returning *';
+    const values = [num, type, price, cap, descript, pic];
 
     const insert = await client.query(ins, values);
     const room = insert.rows[0];
