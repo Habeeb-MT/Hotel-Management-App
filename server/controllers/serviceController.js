@@ -109,3 +109,30 @@ export const fetchMyRequstedRoomServiceController = async (req, res) => {
         });
     }
 };
+
+
+// reject room service
+export const rejectRoomServiceController = async (req, res) => {
+    try {
+        const { serviceId } = req.body;
+        const stat = "Rejected"
+        const updateQuery = 'UPDATE service SET status = $1 WHERE serviceid = $2 RETURNING serviceId';
+        const values = [stat, serviceId];
+        const { rows } = await client.query(updateQuery, values);
+        const newServiceId = rows[0].id;
+
+        return res.status(201).send({
+            success: true,
+            message: 'room service rejected successfully',
+            serviceId: newServiceId,
+        });
+    } catch (error) {
+        console.error("Error in service rejection:", error);
+
+        return res.status(500).send({
+            success: false,
+            message: 'Error occurred while rejecting room service',
+            error: error.message,
+        });
+    }
+};

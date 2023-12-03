@@ -33,16 +33,19 @@ export const Login = () => {
             if (res && res.data.success) {
                 setAuth({
                     ...auth,
-                    user: res.data.user,
+                    user: res.data.userData,
                     token: res.data.token,
                 });
                 localStorage.setItem('auth', JSON.stringify(res.data));
-                navigate(location.state || `/dashboard`);
+
+                res.data.userData.role === 'guest' ? navigate('/profile') : navigate(location.state || '/dashboard');
+
             } else {
                 setSnackbarMessage(res.data.message);
                 setOpenSnackbar(true);
             }
         } catch (error) {
+            console.log(error)
             setSnackbarMessage('Something went wrong');
             setOpenSnackbar(true);
         }

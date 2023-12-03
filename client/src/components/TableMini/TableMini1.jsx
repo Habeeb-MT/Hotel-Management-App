@@ -47,54 +47,76 @@ export const TableMini1 = () => {
         }
     };
 
+
+    const rejectService = async (serviceId) => {
+        try {
+            const response = await axios.put(`/api/v1/service/reject-service`, { serviceId });
+
+            if (response && response.data && response.data.success) {
+                // Remove the cancelled service from the booked list
+                setServiceList(prev => prev.filter(service => service.serviceid !== serviceId));
+            }
+        } catch (error) {
+            console.error("Error rejecting service:", error);
+            // Handle error scenario, display an error message or take appropriate action
+        }
+    };
+
+
     return (
         <div>
             <>
-                <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Service request</Typography>
                 <div className='table' style={{ padding: "20px" }}>
                     <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
+                        <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)", textDecoration: "underline" }}>Service request</Typography>
 
                         <Table aria-label="simple table">
-                            <TableHead className='tablehead'>
-                                <TableRow>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Guest-ID</TableCell>
-                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
-                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Service-Type</TableCell>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {serviceList.map((service, index) => (
-                                    <TableRow
-
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
-                                        <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.rnumber}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.servicetype}</TableCell>
-                                        <TableCell align="center">
-                                            <Button
-                                                className='rmbtn'
-                                                variant="contained"
-                                                component={Link}
-                                                size="small"
-                                                style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                onClick={() => acceptService(service.serviceid)}
-                                            >Accept</Button>
-                                            <Button
-                                                className='rmbtn'
-                                                variant="contained"
-                                                component={Link}
-                                                size="small"
-                                                style={{ background: "red", margin: "1px", fontSize: "10px" }}
-                                            >Reject</Button>
-                                        </TableCell>
+                            {serviceList.length > 0 ? <>
+                                <TableHead className='tablehead'>
+                                    <TableRow>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="left">Guest-ID</TableCell>
+                                        <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
+                                        <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Service-Type</TableCell>
+                                        <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
                                     </TableRow>
-                                ))
-                                }
-                            </TableBody>
+                                </TableHead>
+                                <TableBody>
+                                    {serviceList.map((service, index) => (
+                                        <TableRow
+
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
+                                            <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
+                                            <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.rnumber}</TableCell>
+                                            <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service.servicetype}</TableCell>
+                                            <TableCell align="center">
+                                                <Button
+                                                    className='rmbtn'
+                                                    variant="contained"
+                                                    component={Link}
+                                                    size="small"
+                                                    style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
+                                                    onClick={() => acceptService(service.serviceid)}
+                                                >Accept</Button>
+                                                <Button
+                                                    className='rmbtn'
+                                                    variant="contained"
+                                                    component={Link}
+                                                    size="small"
+                                                    style={{ background: "red", margin: "1px", fontSize: "10px" }}
+                                                    onClick={() => rejectService(service.serviceid)}
+                                                >Reject</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                    }
+                                </TableBody>
+                            </> :
+                                <Typography variant='h6' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>No Service Request Pending!</Typography>
+
+                            }
                         </Table>
                     </TableContainer>
                 </div>

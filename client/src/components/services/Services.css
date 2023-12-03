@@ -6,3 +6,8 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.flexDiv{
+    display: flex;
+    flex-direction: row;
+}

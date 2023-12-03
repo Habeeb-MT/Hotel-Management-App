@@ -26,6 +26,7 @@ import { useAuth } from "../../contexts/auth";
 import { MyBookings } from "../dashboard/MyBookings";
 import { GuestDetails } from "../Rooms/GuestDetails";
 import { ReportList } from "../Guests/userReport";
+import { Profile } from "../dashboard/Profile";
 
 const Pages = () => {
   const { auth, isAdmin } = useAuth();
@@ -52,6 +53,7 @@ const Pages = () => {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/rooms" element={<Blog />} />
           <Route exact path="/contact" element={<Contact />} />
+          <Route exact path="/profile" element={<Profile />} />
           <Route
             exact
             path="/dashboard"

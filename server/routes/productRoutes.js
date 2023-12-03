@@ -14,7 +14,8 @@ import {
   checkOutServiceController,
   fetchMyBookingController,
   fetchMyCheckedInServiceController,
-  cancelMyBookingController
+  cancelMyBookingController,
+  rejectBookingController
 } from "../controllers/productController.js";
 const router = express.Router();
 
@@ -45,6 +46,9 @@ router.get("/fetchreserve/", fetchReserveController);
 
 router.put("/acceptBooking", acceptReserveController);
 
+router.put("/rejectBooking", rejectBookingController);
+
+
 
 router.put("/cancelBooking", cancelMyBookingController);
 
@@ -55,5 +59,8 @@ router.put("/checkout", checkOutServiceController);
 router.get("/getMyService/:serviceType", fetchMyBookingController);
 
 router.get("/fetchcheckedinrooms", fetchMyCheckedInServiceController);
+
+
+
 
 export default router;

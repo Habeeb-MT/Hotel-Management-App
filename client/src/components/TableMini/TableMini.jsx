@@ -40,10 +40,24 @@ export const TableMini = () => {
 
             if (response && response.data && response.data.success) {
                 // Update serviceList to reflect the changes in UI
-                setServiceList((prevServiceList) => prevServiceList.filter((service) => service.reserveId !== reserveId));
+                setServiceList((prevServiceList) => prevServiceList.filter((service) => service.reserveId === reserveId));
             }
         } catch (error) {
             console.error("Error accepting booking:", error);
+            // Handle error scenario, display an error message or take appropriate action
+        }
+    };
+
+    const rejectBooking = async (reserveId) => {
+        try {
+            const response = await axios.put(`/api/v1/room/rejectBooking`, { reserveId });
+
+            if (response && response.data && response.data.success) {
+                // Remove the cancelled service from the booked list
+                setServiceList(prev => prev.filter(service => service.reserveid !== reserveId));
+            }
+        } catch (error) {
+            console.error("Error rejecting booking:", error);
             // Handle error scenario, display an error message or take appropriate action
         }
     };
@@ -52,51 +66,57 @@ export const TableMini = () => {
     return (
         <div>
             <>
-                <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Reservations</Typography>
                 <div className='table' style={{ padding: "20px" }}>
                     <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
 
+                        <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)", textDecoration: "underline" }}>Reservations</Typography>
                         <Table aria-label="simple table">
-                            <TableHead className='tablehead'>
-                                <TableRow>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Guest-ID</TableCell>
-                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
-                                    <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Date</TableCell>
-                                    <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {serviceList.map((service, index) => (
-                                    <TableRow
+                            {serviceList.length > 0 ?
+                                <>
+                                    <TableHead className='tablehead'>
+                                        <TableRow>
+                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">SI</TableCell>
+                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Guest-ID</TableCell>
+                                            <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Room No</TableCell>
+                                            <TableCell className='mobile' style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Date</TableCell>
+                                            <TableCell style={{ fontSize: "16px", color: "var(--textColor)" }} align="center">Action</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {serviceList.map((service, index) => (
+                                            <TableRow
 
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
-                                        <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.rnumber}</TableCell>
-                                        <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.startdate?.slice(0, 10)} - {service?.enddate?.slice(0, 10)}</TableCell>
-                                        <TableCell align="center">
-                                            <Button
-                                                className='rmbtn'
-                                                variant="contained"
-                                                component={Link}
-                                                size="small"
-                                                style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
-                                                onClick={() => acceptBooking(service.reserveid)}
-                                            >Accept</Button>
-                                            <Button
-                                                className='rmbtn'
-                                                variant="contained"
-                                                component={Link}
-                                                size="small"
-                                                style={{ background: "red", margin: "1px", fontSize: "10px" }}
-                                            >Reject</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                                }
-                            </TableBody>
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                            >
+                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
+                                                <TableCell component="th" scope="row" align='center' style={{ fontSize: "12px", color: "var(--textColor)" }}>{service.guestid}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.rnumber}</TableCell>
+                                                <TableCell className='mobile' style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{service?.startdate?.slice(0, 10)} - {service?.enddate?.slice(0, 10)}</TableCell>
+                                                <TableCell align="center">
+                                                    <Button
+                                                        className='rmbtn'
+                                                        variant="contained"
+                                                        component={Link}
+                                                        size="small"
+                                                        style={{ background: "#754ef9", margin: "1px", fontSize: "10px" }}
+                                                        onClick={() => acceptBooking(service.reserveid)}
+                                                    >Accept</Button>
+                                                    <Button
+                                                        className='rmbtn'
+                                                        variant="contained"
+                                                        component={Link}
+                                                        size="small"
+                                                        style={{ background: "red", margin: "1px", fontSize: "10px" }}
+                                                        onClick={() => rejectBooking(service.reserveid)}
+                                                    >Reject</Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                        }
+                                    </TableBody>
+                                </> :
+                                <Typography variant='h6' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>No Booking Request Pending!</Typography>
+                            }
                         </Table>
                     </TableContainer>
                 </div>

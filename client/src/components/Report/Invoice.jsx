@@ -83,28 +83,28 @@ export const Invoice = ({ invoiceData }) => {
                         </View>
                     </View>
                     <Text style={styles.title}>Invoice</Text>
-                    <Text style={styles.section}>Invoice-ID: #{invoiceData.invoice.reserveid}</Text>
+                    <Text style={styles.section}>Invoice-ID: #{invoiceData.invoice.invoiceid}</Text>
                     <Text style={styles.section}>Payment Method: {invoiceData.invoice.pmethod}</Text>
 
                     {invoiceData.invoice.pmethod === "UPI-Payment" ? (<>
-                        <Text style={styles.section}>UPI ID: 4567849</Text>
+                        <Text style={styles.section}>UPI ID: {invoiceData.invoice.upiid}</Text>
                     </>) : (<>
                         <Text style={styles.section}>Card Number: {invoiceData.invoice.cardnumber}</Text>
                     </>)}
-                    <Text style={styles.section}>Billing Address: Nit Calicut,kerala</Text>
+                    <Text style={styles.section}>Billing Address: {invoiceData.invoice.badress}</Text>
 
                     {invoiceData.roomDetails ? (
                         <>
                             <View style={styles.tableHeader}>
-                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Type : Luxury Suite</Text>
-                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Number : f321</Text>
+                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Type :  {invoiceData.roomDetails.rnumber}</Text>
+                                <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Room Number : {invoiceData.roomDetails.rnumber}</Text>
                             </View>
                         </>
                     ) : (
                         <Text style={styles.section}>No room details available</Text>
                     )}
                     <View style={styles.footer}>
-                        <Text>Total Amount: INR 4599</Text>
+                        <Text>Total Amount: INR {invoiceData.roomDetails.charge}</Text>
                         <Text></Text>
                     </View>
                     <View style={styles.termsAndConditions}>

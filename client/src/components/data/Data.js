@@ -23,8 +23,8 @@ export const nav = [
 
 export const navUser = [
   {
-    text: "dashboard",
-    path: "/dashboard",
+    text: "Profile",
+    path: "/profile",
   },
   {
     text: "Bookings",

@@ -2,8 +2,6 @@ import "./Dashboard.scss";
 import React, { useEffect, useState } from 'react'
 import { FaUsers } from 'react-icons/fa'
 import { FaHotel } from 'react-icons/fa'
-import { FaBookOpen } from "react-icons/fa";
-import { FaBookDead } from 'react-icons/fa'
 import { TableMini } from "../TableMini/TableMini";
 import { TimerComponent } from "./TmerComponent";
 import { TableMini1 } from "../TableMini/TableMini1";

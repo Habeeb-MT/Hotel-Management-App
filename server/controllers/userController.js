@@ -4,7 +4,7 @@ dotenv.config();
 
 
 
-// fetch guestList
+// fetch users
 export const fetchGuestController = async (req, res) => {
     try {
         const get = await client.query('SELECT id, name, email, rnumber FROM users, reserve WHERE id = guestId AND role = $1 AND status = $2', ["guest", "CheckedIn"]);
@@ -27,30 +27,30 @@ export const fetchGuestController = async (req, res) => {
         });
     }
 };
-// fetch report
-export const fetchReportController = async (req, res) => {
-    try {
-        const get = await client.query('SELECT * FROM invoice');
-        const report = get.rows;
 
-        // Send the rooms as JSON response
+
+// fetch user
+export const fetchUserController = async (req, res) => {
+    const { id } = req.query; // Retrieve 'id' from query parameters
+    try {
+        const get = await client.query('SELECT id, name, email, phone, state, city, pin FROM users WHERE id = $1', [id]);
+        const user = get.rows[0]; // Assuming you want a single user object
+
         res.json({
             success: true,
-            message: 'report fetched successfully',
-            report,
+            message: 'User details fetched successfully',
+            user,
         });
-
     } catch (error) {
         console.log(error);
-
-        // Send an error response if there's an issue
         res.status(500).json({
             success: false,
-            message: 'Error occurred in report fetching',
+            message: 'Error occurred in user fetching',
             error: error.message,
         });
     }
 };
+
 
 
 // fetch guestList
@@ -72,6 +72,62 @@ export const fetchOccupantController = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error occurred in occupants fetching',
+            error: error.message,
+        });
+    }
+};
+
+
+// update user 
+export const updateUserController = async (req, res) => {
+    const { id, name, phone, state, city, pin } = req.body;
+    const { updatedUser } = req.body;
+    console.log(updatedUser)
+    try {
+        const update = await client.query('UPDATE users set name = $1, phone = $2, state = $3, city = $4, pin = $5 WHERE id = $6', [updatedUser.name, updatedUser.phone, updatedUser.state, updatedUser.city, updatedUser.pin, updatedUser.id]);
+        const user = update.rows[0];
+
+        // Once the user is updated, send a success response
+        res.json({
+            success: true,
+            message: 'User updated successfully',
+            user,
+        });
+    } catch (error) {
+        console.error(error);
+        // If an error occurs during the update, send an error response
+        res.status(500).json({
+            success: false,
+            message: 'Error updating user',
+            error: error.message,
+        });
+    }
+};
+
+
+
+
+
+// fetch report
+export const fetchReportController = async (req, res) => {
+    try {
+        const get = await client.query('SELECT * FROM invoice');
+        const report = get.rows;
+
+        // Send the rooms as JSON response
+        res.json({
+            success: true,
+            message: 'report fetched successfully',
+            report,
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        // Send an error response if there's an issue
+        res.status(500).json({
+            success: false,
+            message: 'Error occurred in report fetching',
             error: error.message,
         });
     }

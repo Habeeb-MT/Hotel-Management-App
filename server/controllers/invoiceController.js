@@ -11,10 +11,10 @@ export const createInvoiceController = async (req, res) => {
         const pMethod = paymentInfo.cardNumber ? "Debit/Credit-Card" : "UPI-Payment";
         console.log(paymentInfo, room, pMethod, date)
 
-        const insertQuery = 'INSERT INTO invoice (reserveid, date, guestId, amount, pMethod, cardNumber, upiID, bAdress) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING reserveid';
+        const insertQuery = 'INSERT INTO invoice (invoiceid, date, guestId, amount, pMethod, cardNumber, upiID, bAdress) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING invoiceid';
         const values = [reserveId, date, room.guestid, room.rate, pMethod, paymentInfo.cardNumber, paymentInfo.upiId, paymentInfo.billingAddress];
         const result = await client.query(insertQuery, values);
-        const newInvoiceId = result.rows[0].reserveid;
+        const newInvoiceId = result.rows[0].invoiceId;
 
         return res.status(201).send({
             success: true,
@@ -38,7 +38,7 @@ export const fetchInvoiceController = async (req, res) => {
 
     try {
         const { reserveId } = req.params;
-        const get = await client.query('SELECT * FROM invoice WHERE reserveid = $1', [reserveId]);
+        const get = await client.query('SELECT * FROM invoice WHERE invoiceid = $1', [reserveId]);
         const invoice = get.rows[0];
 
         res.json({

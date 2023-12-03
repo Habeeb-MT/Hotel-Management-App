@@ -93,19 +93,18 @@ const Services = () => {
         });
         if (response1.data.success) {
           const req = response1.data.services;
-          setter2(req);
+          setRequests(req);
         }
-
-
       } catch (err) {
         console.error(err.message);
       }
     };
 
     fetchServices(setRooms, setRequests);
-  }, [auth]);
+  }, [auth, setRequests, requests.length]);
 
 
+  console.log("hello")
 
 
   return (

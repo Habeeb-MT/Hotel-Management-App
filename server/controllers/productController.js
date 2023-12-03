@@ -587,3 +587,30 @@ export const fetchMyCheckedInServiceController = async (req, res) => {
   }
 };
 
+
+
+// reject room booking
+export const rejectBookingController = async (req, res) => {
+  try {
+    const { reserveId } = req.body;
+    const stat = "Rejected"
+    const updateQuery = 'UPDATE reserve SET status = $1 WHERE reserveid = $2 RETURNING reserveid';
+    const values = [stat, reserveId];
+    const { rows } = await client.query(updateQuery, values);
+    const newServiceId = rows[0].id;
+
+    return res.status(201).send({
+      success: true,
+      message: 'room booking rejected successfully',
+      serviceId: newServiceId,
+    });
+  } catch (error) {
+    console.error("Error in booking rejection:", error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Error occurred while rejecting room booking',
+      error: error.message,
+    });
+  }
+};
