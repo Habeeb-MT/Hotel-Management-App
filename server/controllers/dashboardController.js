@@ -73,8 +73,7 @@ export const getRequestCount = async (req, res) => {
         const count2 = countResult1.rows[0].count;
         const count = parseInt(count1) + parseInt(count2);
         // Print count to the terminal
-        console.log(count1)
-        console.log(count2)
+
         res.status(200).json({
             success: true,
             count: count,
