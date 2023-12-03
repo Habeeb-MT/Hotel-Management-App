@@ -25,7 +25,7 @@ app.use("/api/v1/room", productRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/service", serviceRoutes);
 app.use("/api/v1/invoice", invoiceRoutes);
-
+app.use("/api/v1/product", productRoutes);
 //rest api
 app.get('/', (req, res) => {
     res.send(

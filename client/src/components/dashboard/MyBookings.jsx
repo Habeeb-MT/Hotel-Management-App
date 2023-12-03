@@ -242,7 +242,7 @@ export const MyBookings = () => {
                                             <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                 <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align='center'>{index + 1}</TableCell>
                                                 <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="left">{item.rnumber}</TableCell>
-                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">{formatDate(item.startdate)} - {formatDate(item.enddate)}
+                                                <TableCell style={{ fontSize: "12px", color: "var(--textColor)" }} align="center">8-12-2023
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <div>

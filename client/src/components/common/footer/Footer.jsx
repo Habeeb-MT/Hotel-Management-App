@@ -40,7 +40,7 @@ const Footer = () => {
       </section>
 
       <div className='legal'>
-        <span>© 2021 HillView Resort. All rights reserved.</span>
+        <span>© 2023 HillView Resort. All rights reserved.</span>
       </div>
     </>
   )

@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from "../../contexts/auth";
-
+import { Typography } from '@mui/material';
 export const TableMini1 = () => {
     const [serviceList, setServiceList] = useState([])
 
@@ -50,6 +50,7 @@ export const TableMini1 = () => {
     return (
         <div>
             <>
+                <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Service request</Typography>
                 <div className='table' style={{ padding: "20px" }}>
                     <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
 

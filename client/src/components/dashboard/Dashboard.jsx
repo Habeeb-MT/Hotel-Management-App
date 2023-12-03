@@ -1,6 +1,7 @@
 import "./Dashboard.scss";
 import React, { useEffect, useState } from 'react'
 import { FaUsers } from 'react-icons/fa'
+import { FaHotel } from 'react-icons/fa'
 import { FaBookOpen } from "react-icons/fa";
 import { FaBookDead } from 'react-icons/fa'
 import { TableMini } from "../TableMini/TableMini";
@@ -46,39 +47,33 @@ export const Dashboard = () => {
                         <div className="middlesection">
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>44</h2>
+                                    <h2>35</h2>
                                     <div className="icon"><FaUsers /></div>
                                 </div>
                                 <p>Total Users</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>44</h2>
-                                    <div className="icon"><FaUsers /></div>
+                                    <h2>17</h2>
+                                    <div className="icon"><FaHotel /></div>
                                 </div>
-                                <p>Total Users</p>
+                                <p>Total Rooms</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>44</h2>
-                                    <div className="icon"><FaUsers /></div>
+                                    <h2>12</h2>
+                                    <div className="icon"><FaHotel /></div>
                                 </div>
-                                <p>Total Users</p>
+                                <p>Total Occupied Room</p>
                             </div>
                             <div className="stats">
                                 <div className="flexicon">
-                                    <h2>225</h2>
-                                    <div className="icon"><FaBookOpen /></div>
+                                    <h2>4</h2>
+                                    <div className="icon"><FaHotel /></div>
                                 </div>
-                                <p>Borrowed Books</p>
+                                <p>Total Requests</p>
                             </div>
-                            <div className="stats">
-                                <div className="flexicon">
-                                    <h2>73</h2>
-                                    <div className="icon"><FaBookDead /></div>
-                                </div>
-                                <p>Overdue Books</p>
-                            </div>
+
                         </div>
                         <div className="bottomsection">
                             <TableMini />

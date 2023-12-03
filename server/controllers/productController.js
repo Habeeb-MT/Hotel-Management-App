@@ -9,25 +9,74 @@ dotenv.config();
 
 export const productFiltersController = async (req, res) => {
   try {
-    const { checked, radio } = req.body;
-    let args = {};
-    if (checked.length > 0) args.category = checked;
-    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
-    const products = await productModel.find(args);
+    const { selectedOccupancy, selectedSuiteType, selectedRate, startDate, endDate } = req.query;
+
+    let values = [];
+    let conditions = [];
+    let index = 1;
+
+    if (selectedOccupancy && selectedOccupancy.length > 0) {
+      conditions.push(`occupancy = $${index}`);
+      values.push(selectedOccupancy[0]);
+      index++;
+    }
+
+    if (selectedSuiteType && selectedSuiteType.length > 0) {
+      conditions.push(`rtype = $${index}`);
+      values.push(selectedSuiteType[0]);
+      index++;
+    }
+
+    if (selectedRate && selectedRate.length === 2) {
+      conditions.push(`rate BETWEEN $${index} AND $${index + 1}`);
+      values.push(selectedRate[0], selectedRate[1]);
+      index += 2;
+    }
+
+    if (startDate && endDate) {
+      conditions.push(`(startdate NOT BETWEEN $${index} AND $${index + 1} AND enddate NOT BETWEEN $${index} AND $${index + 1})`);
+      values.push(startDate, endDate);
+      index += 2;
+    }
+
+    const result = await client.query(
+      `
+        SELECT *
+        FROM rooms
+        ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
+      `,
+      values
+    );
+
+    console.log('Generated SQL Query:', `
+    SELECT *
+    FROM rooms
+    ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
+  `);
+
+    console.log('Query Values:', values);
+
+    const rooms = result.rows;
 
     res.status(200).send({
       success: true,
-      products,
+      message: "Filter works successfully.",
+      rooms,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send({
+    console.error(error);
+    res.status(500).send({
       success: false,
-      message: "Error WHile searching rooms",
-      error,
+      message: "Error while searching rooms",
+      error: error.message || error,
     });
   }
 };
+
+
+
+
+
 
 
 

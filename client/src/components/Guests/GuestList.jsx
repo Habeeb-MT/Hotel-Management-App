@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,12 +8,13 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { TextField, InputAdornment, IconButton } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 export const GuestList = () => {
 
     const [gList, setGList] = useState([]);
+    const [searchText, setSearchText] = useState('');
 
 
     useEffect(() => {
@@ -30,7 +31,6 @@ export const GuestList = () => {
                                 const occupantResponse = await axios.get(`/api/v1/user/fetchOccupant`, { params: { guestId: guest.id } });
                                 if (occupantResponse.data.success) {
                                     const occupants = occupantResponse.data.occupants;
-                                    console.log(occupants)
                                     return {
                                         ...guest,
                                         occupants: occupants // Add occupants to the user object
@@ -54,20 +54,44 @@ export const GuestList = () => {
     }, []);
 
 
+    const handleSearch = (event) => {
+        setSearchText(event.target.value);
+    };
 
-
-
-
-
-
-
-
+    const filteredGuests = gList.filter((user) =>
+        user.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.rnumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.id.toString().includes(searchText)
+    );
 
 
     return (
         <div>
             <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Checked Guests List</Typography>
-            {gList.length != 0 ? (
+
+            <TextField
+                label="Search..."
+                variant="outlined"
+                value={searchText}
+                onChange={handleSearch}
+                style={{
+                    marginBottom: '20px',
+                    marginLeft: '20px',
+                    width: '300px',
+                }}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton>
+                                <SearchIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+            />
+
+            {filteredGuests.length != 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>
                         <TableContainer component={Paper} style={{ background: "var(--bg1)" }} >
@@ -89,7 +113,7 @@ export const GuestList = () => {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        gList.map((user, index) => (
+                                        filteredGuests.map((user, index) => (
                                             <TableRow
                                                 key={user?.lid}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

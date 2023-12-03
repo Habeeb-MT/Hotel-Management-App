@@ -65,12 +65,7 @@ export const GuestDetails = ({ onAddGuest }) => {
                                         value={guest.name}
                                         onChange={(e) => handleGuestChange(index, 'name', e.target.value)}
                                     />
-                                    <TextField
-                                        label={`Guest ${index + 1} Email`}
-                                        variant="outlined"
-                                        value={guest.email}
-                                        onChange={(e) => handleGuestChange(index, 'email', e.target.value)}
-                                    />
+
                                     <DeleteIcon onClick={() => handleRemoveGuest(index)} />
                                 </div>
 

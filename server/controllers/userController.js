@@ -27,6 +27,30 @@ export const fetchGuestController = async (req, res) => {
         });
     }
 };
+// fetch report
+export const fetchReportController = async (req, res) => {
+    try {
+        const get = await client.query('SELECT * FROM invoice');
+        const report = get.rows;
+
+        // Send the rooms as JSON response
+        res.json({
+            success: true,
+            message: 'report fetched successfully',
+            report,
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        // Send an error response if there's an issue
+        res.status(500).json({
+            success: false,
+            message: 'Error occurred in report fetching',
+            error: error.message,
+        });
+    }
+};
 
 
 // fetch guestList
