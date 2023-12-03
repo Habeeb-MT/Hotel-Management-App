@@ -57,15 +57,28 @@ CREATE TABLE occupants (
 
 -- ---------------------------------------------------------------------------------------------
 
+
+
+
+
+CREATE TABLE users(
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(20),
+    email VARCHAR(20),
+    password VARCHAR(64),
+    role VARCHAR(10)
+);
+
+
 CREATE TABLE rooms (
-  rnumber VARCHAR(10) PRIMARY KEY NOT NULL,
+  rnumber VARCHAR(10) PRIMARY KEY NOT NULL UNIQUE,
   rtype VARCHAR(20),
   rate VARCHAR(5),
   occupancy VARCHAR(5),
-  hotelID VARCHAR(10),
   description VARCHAR(100),
   pic VARCHAR(15)
 );
+
 
 CREATE TABLE reserve (
   reserveID SERIAL PRIMARY KEY NOT NULL,
@@ -75,8 +88,8 @@ CREATE TABLE reserve (
   endDate DATE,
   charge VARCHAR(5),
   status VARCHAR(10),
-  FOREIGN KEY (rnumber) REFERENCES rooms(rnumber),
-  FOREIGN KEY (guestID) REFERENCES users(id)
+  FOREIGN KEY (rnumber) REFERENCES rooms(rnumber) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (guestID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE service(
@@ -86,6 +99,28 @@ CREATE TABLE service(
   guestID INT,
   rnumber VARCHAR(10),
   status VARCHAR(10),
-  FOREIGN KEY (rnumber) REFERENCES rooms(rnumber),
-  FOREIGN KEY (guestID) REFERENCES users(id)
+  FOREIGN KEY (rnumber) REFERENCES rooms(rnumber) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (guestID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE invoice (
+  invoiceID SERIAL PRIMARY KEY,
+  date DATE,
+  guestID INT,
+  amount INT, 
+  pMethod VARCHAR(20),
+  cardNumber VARCHAR(10),
+  upiID VARCHAR(10),
+  bAdress VARCHAR(30)
+  FOREIGN KEY (guestID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE occupants (
+  guestId INT,
+  serviceId INT,
+  oName VARCHAR(20),
+  PRIMARY KEY(guestID, serviceId, oName),
+  FOREIGN KEY (guestID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (serviceId) REFERENCES reserve(reserveID) ON DELETE CASCADE ON UPDATE CASCADE
 );

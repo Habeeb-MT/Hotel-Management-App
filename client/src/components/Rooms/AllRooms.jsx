@@ -13,27 +13,46 @@ import { useAuth } from '../../contexts/auth';
 import { AddRoomForm } from './AddRoomForm';
 import axios from 'axios';
 import ViewRoom from "./ViewRoom";
+import { Snackbar, Alert } from "@mui/material";
 
 export const AllRooms = () => {
-    const { isManager } = useAuth();
 
+    const { isManager } = useAuth();
     const [openViews, setOpenViews] = useState({});
+    const [open, setOpen] = useState(false);
+    const [rooms, setRooms] = useState([]);
+    const [roomToEdit, setRoomToEdit] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+
     const handleCloseView = (rnumber) => {
         setOpenViews((prevOpenViews) => ({ ...prevOpenViews, [rnumber]: false }));
     };
 
-    const [open, setOpen] = useState(false);
-    const [rooms, setRooms] = useState([]);
-    const [roomToEdit, setRoomToEdit] = useState(null);
+    const handleSnackbar = (message, severity) => {
+        setSnackbarOpen(true);
+        setSnackbarSeverity(severity); // Add severity level
+        setSnackbarMessage(message);
+    };
 
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
+
+    // Usage example for successful room addition:
     const handleRoomAdded = (newRoom) => {
         setRooms((prevRooms) => [...prevRooms, newRoom]);
+        handleSnackbar('Room added/Updated successfully');
     };
 
     const handleEdit = (room) => {
         setRoomToEdit(room);
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
         setRoomToEdit(null);
@@ -42,7 +61,7 @@ export const AllRooms = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("/api/v1/room/fetchrooms");
+                const response = await axios.get('/api/v1/room/fetchrooms');
                 if (response) {
                     const jsonData = response.data.rooms;
                     setRooms(jsonData);
@@ -59,13 +78,16 @@ export const AllRooms = () => {
         try {
             const response = await axios.delete(`/api/v1/room/deleteroom/${rnum}`);
             if (response.data.success) {
-                // Remove the deleted room from the local state
                 setRooms((prevRooms) => prevRooms.filter((room) => room.rnumber !== rnum));
+                handleSnackbar('Room deleted successfully', 'success');
             }
         } catch (err) {
             console.error(err.message);
+            handleSnackbar('Error deleting room', 'error');
         }
     };
+
+
 
     return (
         <div>
@@ -181,6 +203,16 @@ export const AllRooms = () => {
                 ""
             )
             }
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
         </div>
     );
 };

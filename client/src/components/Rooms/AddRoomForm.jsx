@@ -75,6 +75,7 @@ export const AddRoomForm = ({ open, handleClose, onRoomAdded, roomToEdit }) => {
             }
             if (response && response.data.success) {
                 console.log("Room added/edited successfully:", response.data);
+                onRoomAdded(response.data.room);
                 handleClose();
             } else {
                 console.log("error");

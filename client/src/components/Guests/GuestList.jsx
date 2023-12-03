@@ -66,7 +66,7 @@ export const GuestList = () => {
 
     return (
         <div>
-            <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Guests List</Typography>
+            <Typography variant='h5' style={{ textAlign: "center", margin: "20px 40px", color: "var(--textColor)" }}>Checked Guests List</Typography>
             {gList.length != 0 ? (
                 <>
                     <div className='table' style={{ padding: "20px" }}>

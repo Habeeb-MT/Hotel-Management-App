@@ -61,15 +61,15 @@ export const createProductController = async (req, res) => {
   try {
     const { type, cap, num, price, descript, pic } = req.body;
 
-    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, hotelid) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING rnumber';
+    const ins = 'INSERT INTO rooms (rnumber, rtype, rate, occupancy, description, pic, hotelid) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *';
     const values = [num, type, price, cap, descript, pic, "HillView"];
 
     const insert = await client.query(ins, values);
-
+    const room = insert.rows[0];
     return res.status(201).send({
       success: true,
       message: 'Room added successfully',
-      insert,
+      room,
     });
   } catch (error) {
     console.log(error);
@@ -157,7 +157,7 @@ export const editProductController = async (req, res) => {
       return res.status(200).send({
         success: true,
         message: 'Room updated successfully',
-        updatedRoom: result.rows[0],
+        room: result.rows[0],
       });
     } else {
       return res.status(404).send({
