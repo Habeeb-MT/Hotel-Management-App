@@ -34,19 +34,21 @@ export const productFiltersController = async (req, res) => {
       values.push(startDate, endDate);
       index += 2;
     }
+
     const result = await client.query(
       `
-        SELECT *
-        FROM rooms
-        LEFT JOIN reserve ON rooms.rnumber = reserve.rnumber
-        ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
-        AND (
-          reserve.rnumber IS NULL OR
-          (reserve.rnumber IS NOT NULL AND (reserve.enddate < $${index} OR reserve.startdate > $${index + 1}))
-        )
+      SELECT DISTINCT rooms.*
+      FROM rooms
+      LEFT JOIN reserve ON rooms.rnumber = reserve.rnumber
+      ${conditions.length > 0 ? ' WHERE ' : ''} ${conditions.join(' AND ')}
+      AND (
+        reserve.rnumber IS NULL OR
+        (reserve.rnumber IS NOT NULL AND (reserve.enddate < $${index} OR reserve.startdate > $${index + 1}))
+      )
       `,
       [...values, startDate, endDate]
     );
+
 
     console.log('Generated SQL Query:', `
     SELECT *

@@ -4,11 +4,22 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import ViewRoom from "../../Rooms/ViewRoom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { useAuth } from "../../../contexts/auth";
 
 const RecentCard = ({ searchValues, res }) => {
+  const { auth } = useAuth();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const [rooms, setRooms] = useState([]);
   const [found, setFound] = useState(false);
+
   useEffect(() => {
     if (res?.length > 0) {
       setRooms(res);
@@ -33,8 +44,14 @@ const RecentCard = ({ searchValues, res }) => {
 
   const gotoNext = (roomData) => {
 
-    if (!searchValues.startDate || !searchValues.endDate) {
-      alert("fill dates");
+    if (!auth.user) {
+      setSnackbarOpen(true);
+      navigate("/login")
+      return;
+    }
+
+    else if (!searchValues?.startDate || !searchValues?.endDate) {
+      setSnackbarOpen(true);
       return;
     }
 
@@ -84,7 +101,7 @@ const RecentCard = ({ searchValues, res }) => {
                 <div className="text">
                   <h4>{room.rtype}</h4>
                   <div className="category flex">
-                    <span
+                    {/* <span
                       style={{
                         background:
                           room.status === "Available" ? "#25b5791a" : "#ff98001a",
@@ -93,26 +110,25 @@ const RecentCard = ({ searchValues, res }) => {
                       }}
                     >
                       {room.status === "Available" ? "Available" : "Unvailable"}
-                    </span>
+                    </span> */}
 
                     <Button
                       to={{
                         pathname: "/select-room",
                       }}
                       state={room}
-                    ></Button>
-                    <span
-                      onClick={() => gotoNext(room)}
-                      className="booking"
-                      style={{
-                        background:
-                          room.status === "Available" ? "#25b5791a" : "#ff98001a",
-                        color:
-                          room.status === "Available" ? "#25b579" : "#ff9800",
-                      }}
                     >
-                      {room.status === "Available" ? "Book Now" : "Book Now"}
-                    </span>
+                      <span
+                        onClick={() => gotoNext(room)}
+                        className="booking"
+                        style={{
+                          background: "#25b5791a",
+                          color: "#25b579"
+                        }}
+                      >
+                        Book Now
+                      </span>
+                    </Button>
                   </div>
                 </div>
                 <div className="button flex">
@@ -125,6 +141,20 @@ const RecentCard = ({ searchValues, res }) => {
               </div>
             );
           })}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleCloseSnackbar}
+            severity="error"
+          >
+            Fill in both start and end dates.
+          </MuiAlert>
+        </Snackbar>
       </div>
     </>
   );

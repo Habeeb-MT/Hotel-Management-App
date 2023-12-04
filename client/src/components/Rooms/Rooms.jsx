@@ -13,7 +13,6 @@ export const Rooms = () => {
       <section className="recent padding">
         <div className="container">
           <Search setRes={setRes} setSearchValues={setSearchValues} />
-
           <RecentCard searchValues={searchValues} res={res} />
         </div>
       </section>
