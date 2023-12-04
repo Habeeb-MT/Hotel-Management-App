@@ -18,7 +18,10 @@
 body {
   font-family: "Poppins", sans-serif;
   background-color: #fff;
+  min-height: 100vh;
+  position: relative;
 }
+
 .container {
   max-width: 80%;
   margin: auto;

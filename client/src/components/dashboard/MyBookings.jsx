@@ -166,7 +166,6 @@ export const MyBookings = () => {
                 // console.log(response)
                 setBookedServices(prevBookedServices => prevBookedServices.filter(service => service.reserveId !== reserveId));
 
-                navigate("/about")
             }
         } catch (error) {
             console.error("Error check-in room:", error);

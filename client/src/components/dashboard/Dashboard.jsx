@@ -87,7 +87,6 @@ export const Dashboard = () => {
     }, [recount]);
     return (
         <>
-            {console.log(isAdmin, isManager)}
             {(isManager === null || isAdmin === null) ? (
                 <div>Loading...</div>
             ) : (

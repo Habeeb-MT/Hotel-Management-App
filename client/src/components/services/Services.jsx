@@ -104,8 +104,6 @@ const Services = () => {
   }, [auth, setRequests, requests.length]);
 
 
-  console.log("hello")
-
 
   return (
     <>

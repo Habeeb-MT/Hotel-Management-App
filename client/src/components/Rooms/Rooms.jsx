@@ -8,10 +8,6 @@ export const Rooms = () => {
   const [searchValues, setSearchValues] = useState({});
   const [res, setRes] = useState([]);
 
-
-
-  console.log(searchValues)
-
   return (
     <div>
       <section className="recent padding">

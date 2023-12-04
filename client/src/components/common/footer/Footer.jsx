@@ -17,7 +17,7 @@ const Footer = () => {
   // };
 
   return (
-    <>
+    <div className="footer">
       <section className='footerContact'>
         <div className='container'>
           <div className='send flex'>
@@ -42,7 +42,7 @@ const Footer = () => {
       <div className='legal'>
         <span>© 2023 HillView Resort. All rights reserved.</span>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -31,7 +31,6 @@ export const TableMini = () => {
 
         fetchData();
     }, []);
-    console.log(serviceList)
 
     const acceptBooking = async (reserveId) => {
         try {

@@ -40,6 +40,10 @@ const filterOptions = {
     "Double Suite",
     "Luxury Suite",
     "Presidential Suite",
+    "Junior Suite",
+    "Duplex Suite",
+    "Studio Room",
+    "Deluxe Suite"
   ],
 
   avai: ["Available", "Unavailable"],

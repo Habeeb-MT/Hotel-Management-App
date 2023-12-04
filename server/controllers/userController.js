@@ -111,7 +111,7 @@ export const updateUserController = async (req, res) => {
 // fetch report
 export const fetchReportController = async (req, res) => {
     try {
-        const get = await client.query('SELECT * FROM invoice');
+        const get = await client.query('SELECT * FROM invoice, reserve WHERE invoiceid = reserveid');
         const report = get.rows;
 
         // Send the rooms as JSON response

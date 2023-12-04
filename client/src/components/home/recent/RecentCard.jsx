@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import ViewRoom from "../../Rooms/ViewRoom";
 
 const RecentCard = ({ searchValues, res }) => {
-  console.log(searchValues)
+
   const [rooms, setRooms] = useState([]);
   const [found, setFound] = useState(false);
   useEffect(() => {
